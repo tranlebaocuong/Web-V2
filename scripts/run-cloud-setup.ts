@@ -3,6 +3,7 @@ import path from "path";
 import readline from "readline";
 import { execFileSync } from "child_process";
 import { Pool } from "pg";
+import { SUPABASE_CA_BUNDLE } from "../src/lib/supabase-ca";
 
 /**
  * Hàm che giấu thông tin xác thực (Credentials Masking)
@@ -224,7 +225,7 @@ export async function runCloudSetup() {
     ssl: isCloud
       ? {
           rejectUnauthorized: true,
-          ca: customCaCert,
+          ca: customCaCert || SUPABASE_CA_BUNDLE,
         }
       : undefined,
   });

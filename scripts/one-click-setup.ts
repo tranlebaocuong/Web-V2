@@ -5,6 +5,7 @@ import { execSync, execFileSync } from "child_process";
 import { Pool } from "pg";
 import bcrypt from "bcryptjs";
 import crypto from "crypto";
+import { SUPABASE_CA_BUNDLE } from "../src/lib/supabase-ca";
 
 const PORT = 3333;
 const HOST = "127.0.0.1";
@@ -58,9 +59,22 @@ function maskUrl(urlStr: string): string {
 }
 
 function cleanConnectionUrl(rawUrl: string): { valid: boolean; url: string; error?: string; host?: string; dbName?: string } {
-  const trimmed = rawUrl.trim();
+  let trimmed = rawUrl.trim();
   if (!trimmed) {
     return { valid: false, url: "", error: "Vui lòng nhập chuỗi kết nối Database Supabase." };
+  }
+
+  // Tự động xử lý trường hợp người dùng copy giữ nguyên dấu ngoặc vuông [password]
+  // hoặc mật khẩu có ký tự đặc biệt như @
+  const pattern = /^(postgres(?:ql)?:\/\/[^:]+:)(.*)(@[^@]+(?::\d+)?\/.*)$/;
+  const m = trimmed.match(pattern);
+  if (m) {
+    let pass = m[2];
+    if (pass.startsWith("[") && pass.endsWith("]")) {
+      pass = pass.slice(1, -1);
+    }
+    // Encode ký tự đặc biệt trong password (như @, #, $, ...)
+    trimmed = m[1] + encodeURIComponent(decodeURIComponent(pass)) + m[3];
   }
 
   let parsed: URL;
@@ -377,10 +391,11 @@ const HTML_CONTENT = `<!DOCTYPE html>
       btn.innerHTML = '<span class="spinner"></span> Đang băm mật khẩu và tạo tài khoản...';
 
       try {
+        const urlToUse = verifiedUrl || (document.getElementById('supabase-url') ? document.getElementById('supabase-url').value.trim() : '');
         const res = await fetch('/api/create-admin', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ url: verifiedUrl, email, password })
+          body: JSON.stringify({ url: urlToUse, email, password })
         });
         const data = await res.json();
 
@@ -466,7 +481,7 @@ export function startSetupServer() {
 
         const pool = new Pool({
           connectionString: check.url,
-          ssl: { rejectUnauthorized: true },
+          ssl: { rejectUnauthorized: true, ca: SUPABASE_CA_BUNDLE },
           connectionTimeoutMillis: 10000,
         });
 
@@ -642,7 +657,7 @@ export function startSetupServer() {
 
         const pool = new Pool({
           connectionString: check.url,
-          ssl: { rejectUnauthorized: true },
+          ssl: { rejectUnauthorized: true, ca: SUPABASE_CA_BUNDLE },
           connectionTimeoutMillis: 10000,
         });
 

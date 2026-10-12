@@ -1,6 +1,7 @@
 import { Pool } from "pg";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "@prisma/client";
+import { SUPABASE_CA_BUNDLE } from "./supabase-ca";
 
 /**
  * Xác thực và phân tích cú pháp DATABASE_URL với cơ chế Fail-Fast bảo vệ hệ thống.
@@ -76,7 +77,7 @@ function getPrismaClient(): PrismaClient {
   const sslConfig = isCloud
     ? {
         rejectUnauthorized: true,
-        ca: process.env.DATABASE_SSL_CERT || undefined,
+        ca: process.env.DATABASE_SSL_CERT || SUPABASE_CA_BUNDLE,
       }
     : undefined;
 

@@ -4,6 +4,7 @@ import { Pool } from "pg";
 import bcrypt from "bcryptjs";
 import crypto from "crypto";
 import readline from "readline";
+import { SUPABASE_CA_BUNDLE } from "../src/lib/supabase-ca";
 
 // Bảng kiểm tra mật khẩu bị cấm (Blacklist mật khẩu demo / mặc định / yếu)
 const FORBIDDEN_PASSWORDS = [
@@ -296,7 +297,7 @@ export async function createProductionAdmin() {
     connectionString: targetUrl,
     ssl: {
       rejectUnauthorized: true,
-      ca: customCaCert,
+      ca: customCaCert || SUPABASE_CA_BUNDLE,
     },
   });
 
