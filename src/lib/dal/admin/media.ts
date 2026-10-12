@@ -6,8 +6,10 @@ import crypto from "crypto";
 export const ALLOWED_MIME_TYPES = ["image/jpeg", "image/png", "image/webp"];
 export const MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024; // 5 MB
 
-// Private storage directory outside public/
-export const MEDIA_DIR = path.join(process.cwd(), "data", "media");
+// Private storage directory outside public/ (Configurable via MEDIA_DIR env)
+export const MEDIA_DIR = process.env.MEDIA_DIR
+  ? path.resolve(process.env.MEDIA_DIR)
+  : path.join(process.cwd(), "data", "media");
 
 export async function ensureMediaDir() {
   try {

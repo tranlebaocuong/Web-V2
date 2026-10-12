@@ -1,0 +1,12 @@
+node_modules
+.next
+.git
+.gitignore
+*.log
+.env
+.env*.local
+DEMO_CREDENTIALS.txt
+data
+scratch/pgsql
+reports
+*.tsbuildinfo

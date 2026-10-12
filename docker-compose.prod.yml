@@ -1,0 +1,86 @@
+version: '3.8'
+
+services:
+  # ----------------------------------------------------------------------------
+  # 1. Cơ sở dữ liệu PostgreSQL 17 Native (Cô lập hoàn toàn trong mạng nội bộ)
+  # ----------------------------------------------------------------------------
+  postgres:
+    image: postgres:17-alpine
+    container_name: tusach_db
+    restart: always
+    environment:
+      POSTGRES_DB: sentrang_prod
+      POSTGRES_USER: tusach_admin
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./prisma/search_indexes.sql:/docker-entrypoint-initdb.d/01_extensions.sql:ro
+    networks:
+      - internal_net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tusach_admin -d sentrang_prod"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # ----------------------------------------------------------------------------
+  # 2. Ứng dụng Next.js Production Web App
+  # ----------------------------------------------------------------------------
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: tusach_web
+    restart: always
+    environment:
+      NODE_ENV: production
+      APP_ENV: production
+      DATABASE_URL: postgresql://tusach_admin:${DB_PASSWORD}@postgres:5432/sentrang_prod?sslmode=disable
+      AUTH_SECRET: ${AUTH_SECRET}
+      NEXT_PUBLIC_APP_URL: ${APP_URL:-https://tusachaolam.vn}
+      MEDIA_DIR: /app/data/media
+      PORT: 3000
+    volumes:
+      # Vùng lưu trữ media bền vững: không mất ảnh khi rebuild / update code ứng dụng
+      - media_data:/app/data/media
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - internal_net
+
+  # ----------------------------------------------------------------------------
+  # 3. Reverse Proxy Caddy: Tự động cấp phát và gia hạn chứng chỉ SSL/TLS HTTPS
+  # ----------------------------------------------------------------------------
+  caddy:
+    image: caddy:2-alpine
+    container_name: tusach_proxy
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      DOMAIN: ${DOMAIN:-tusachaolam.vn}
+      EMAIL: ${SSL_EMAIL:-admin@tusachaolam.vn}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - web
+    networks:
+      - internal_net
+
+networks:
+  internal_net:
+    driver: bridge
+
+volumes:
+  pgdata:
+    name: tusach_pgdata
+  media_data:
+    name: tusach_media_data
+  caddy_data:
+    name: tusach_caddy_data
+  caddy_config:
+    name: tusach_caddy_config

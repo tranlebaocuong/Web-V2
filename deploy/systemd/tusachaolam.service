@@ -1,0 +1,40 @@
+# ==============================================================================
+# SYSTEMD SERVICE ĐIỀU PHỐI TIẾN TRÌNH TỦ SÁCH ÁO LAM
+# Đường dẫn cài đặt: /etc/systemd/system/tusachaolam.service
+# Kích hoạt:
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable tusachaolam
+#   sudo systemctl start tusachaolam
+# ==============================================================================
+
+[Unit]
+Description=Tu Sach Ao Lam - Next.js Production Service
+After=network.target postgresql.service
+Wants=postgresql.service
+
+[Service]
+Type=simple
+User=tusach
+Group=tusach
+WorkingDirectory=/var/www/tusachaolam
+
+# Tự động đọc cấu hình biến môi trường production từ .env
+EnvironmentFile=/var/www/tusachaolam/.env
+Environment=NODE_ENV=production
+Environment=PORT=3000
+
+# Lệnh khởi chạy tiến trình Next.js
+ExecStart=/usr/bin/node /var/www/tusachaolam/node_modules/next/dist/bin/next start -p 3000
+
+# Cơ chế tự phục hồi: Khởi động lại sau 5s nếu tiến trình gặp sự cố hoặc server reboot
+Restart=always
+RestartSec=5s
+
+# Giới hạn tài nguyên an toàn cho VPS
+LimitNOFILE=65536
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=tusachaolam
+
+[Install]
+WantedBy=multi-user.target

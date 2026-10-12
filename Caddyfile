@@ -1,0 +1,36 @@
+{
+    email {$EMAIL:admin@tusachaolam.vn}
+}
+
+{$DOMAIN:tusachaolam.vn} {
+    # Tự động chuyển hướng HTTP sang HTTPS được Caddy bật mặc định
+
+    # 1. Reverse proxy chuyển tiếp về container Next.js
+    reverse_proxy web:3000 {
+        header_up X-Forwarded-Proto https
+        header_up X-Real-IP {remote_host}
+        header_up Host {host}
+    }
+
+    # 2. Cấu hình bảo mật HTTP Security Headers
+    header {
+        Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+        X-Content-Type-Options "nosniff"
+        X-Frame-Options "DENY"
+        Referrer-Policy "strict-origin-when-cross-origin"
+        Permissions-Policy "camera=(), microphone=(), geolocation=()"
+        -Server
+    }
+
+    # 3. Chặn tuyệt đối truy cập các tệp nhạy cảm (.env, .git, backups)
+    @blocked {
+        path */.env*
+        path */.git*
+        path *.sql
+        path *.log
+    }
+    respond @blocked 404
+
+    # 4. Gzip và Zstandard nén dữ liệu truyền tải
+    encode zstd gzip
+}
