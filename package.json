@@ -13,7 +13,8 @@
     "db:migrate": "prisma migrate dev",
     "db:generate": "prisma generate",
     "db:seed": "tsx prisma/seed.ts",
-    "db:seed:demo": "tsx prisma/seed-demo.ts"
+    "db:seed:demo": "tsx prisma/seed-demo.ts",
+    "setup-admin": "tsx scripts/one-click-setup.ts"
   },
   "dependencies": {
     "@electric-sql/pglite": "^0.3.15",
