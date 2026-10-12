@@ -54,30 +54,45 @@ export function getValidatedDatabaseUrl(overrideUrl?: string, overrideAppEnv?: s
   return dbUrl;
 }
 
-const connectionString = getValidatedDatabaseUrl();
-
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
   pool: Pool | undefined;
 };
 
-const pool =
-  globalForPrisma.pool ??
-  new Pool({
-    connectionString,
-    max: 10,
-    connectionTimeoutMillis: 5000,
-  });
+/**
+ * Khởi tạo PrismaClient theo cơ chế lazy: chỉ xác thực DATABASE_URL và mở pool kết nối
+ * ở lần truy vấn đầu tiên. Nhờ vậy bước "Collecting page data" của `next build`
+ * (vốn import mọi route module) không bị lỗi khi môi trường build không có DATABASE_URL.
+ */
+function getPrismaClient(): PrismaClient {
+  if (globalForPrisma.prisma) return globalForPrisma.prisma;
 
-if (process.env.NODE_ENV !== "production") globalForPrisma.pool = pool;
+  const connectionString = getValidatedDatabaseUrl();
 
-const adapter = new PrismaPg(pool);
+  const pool =
+    globalForPrisma.pool ??
+    new Pool({
+      connectionString,
+      max: 10,
+      connectionTimeoutMillis: 5000,
+    });
+  globalForPrisma.pool = pool;
 
-export const prisma =
-  globalForPrisma.prisma ??
-  new PrismaClient({
+  const adapter = new PrismaPg(pool);
+
+  const client = new PrismaClient({
     adapter,
     log: process.env.NODE_ENV === "development" ? ["warn", "error"] : ["error"],
   });
+  globalForPrisma.prisma = client;
 
-if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
+  return client;
+}
+
+export const prisma = new Proxy({} as PrismaClient, {
+  get(_target, prop) {
+    const client = getPrismaClient();
+    const value = Reflect.get(client, prop, client);
+    return typeof value === "function" ? value.bind(client) : value;
+  },
+});
