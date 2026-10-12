@@ -1,0 +1,205 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+// 1. PHÂN CẤP HỌC VỤ GĐPT
+model Branch {
+  id          String       @id @db.VarChar(50) // "nganh-dong"
+  name        String       @db.VarChar(150)
+  slug        String       @unique @db.VarChar(150)
+  description String?      @db.Text
+  sortOrder   Int          @default(1) @map("sort_order")
+  isActive    Boolean      @default(true) @map("is_active")
+
+  levels      StudyLevel[]
+  lessons     Lesson[]
+  sources     Source[]
+
+  @@map("branches")
+}
+
+model StudyLevel {
+  id          String   @id @db.VarChar(50) // "mo-mat", "canh-mem", "chan-cung", "tung-bay"
+  branchId    String   @map("branch_id") @db.VarChar(50)
+  name        String   @db.VarChar(150)
+  slug        String   @db.VarChar(150)
+  sortOrder   Int      @default(0) @map("sort_order")
+  description String?  @db.Text
+  isActive    Boolean  @default(true) @map("is_active")
+
+  branch      Branch   @relation(fields: [branchId], references: [id])
+  lessons     Lesson[]
+  sources     Source[]
+
+  @@unique([branchId, slug])
+  @@map("study_levels")
+}
+
+model Category {
+  id        String   @id @db.VarChar(80) // "phat-phap", "hoat-dong-thanh-nien", "van-nghe"
+  name      String   @db.VarChar(200)
+  slug      String   @unique @db.VarChar(150)
+  sortOrder Int      @map("sort_order")
+  lessons   Lesson[]
+
+  @@map("categories")
+}
+
+model Source {
+  id                 String      @id @db.VarChar(80) // "source-mo-mat", ...
+  title              String      @db.VarChar(300)
+  branchId           String      @map("branch_id") @db.VarChar(50)
+  levelId            String      @map("level_id") @db.VarChar(50)
+  publicationYear    Int?        @map("publication_year") @db.SmallInt
+  originalFilename   String?     @map("original_filename") @db.VarChar(255)
+  pageCount          Int?        @map("page_count")
+  sha256             String?     @db.Char(64)
+  publicationNote    String?     @map("publication_note") @db.Text
+  distributionRights String?     @map("distribution_rights") @db.Text
+  publicPdf          Boolean     @default(false) @map("public_pdf")
+  publisher          String?     @db.VarChar(300)
+
+  branch             Branch      @relation(fields: [branchId], references: [id])
+  level              StudyLevel  @relation(fields: [levelId], references: [id])
+  lessons            Lesson[]
+
+  @@map("sources")
+}
+
+// 2. BÀI HỌC VÀ NỘI DUNG TU HỌC
+model Lesson {
+  id                  String             @id @db.VarChar(80) // "D-MM-A-01", ...
+  branchId            String             @map("branch_id") @db.VarChar(50)
+  levelId             String             @map("level_id") @db.VarChar(50)
+  categoryId          String             @map("category_id") @db.VarChar(80)
+  sourceId            String             @map("source_id") @db.VarChar(80)
+  title               String             @db.VarChar(400)
+  slug                String             @unique @db.VarChar(450)
+  sequence            Int
+  summary             String?            @db.Text
+  sourcePdfStartPage  Int?               @map("source_pdf_start_page")
+  sourcePdfEndPage    Int?               @map("source_pdf_end_page")
+  contentStatus       String             @default("raw_extracted") @map("content_status") // raw_extracted | editing | ready
+  publishStatus       String             @default("draft") @map("publish_status")         // draft | published | hidden
+  version             Int                @default(1)
+  importMetadata      Json?              @map("import_metadata")                          // quality_note, section_layout
+  publishedAt         DateTime?          @map("published_at") @db.Timestamptz
+  createdAt           DateTime           @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt           DateTime           @updatedAt @map("updated_at") @db.Timestamptz
+  deletedAt           DateTime?          @map("deleted_at") @db.Timestamptz
+
+  branch              Branch             @relation(fields: [branchId], references: [id])
+  level               StudyLevel         @relation(fields: [levelId], references: [id])
+  category            Category           @relation(fields: [categoryId], references: [id])
+  source              Source             @relation(fields: [sourceId], references: [id])
+  
+  rawContent          LessonRawContent?
+  content             LessonContent?
+  images              LessonImage[]
+  revisions           LessonRevision[]
+
+  @@unique([levelId, categoryId, sequence])
+  @@index([publishStatus, publishedAt])
+  @@map("lessons")
+}
+
+model LessonRawContent {
+  id               String   @id @default(uuid()) @db.Uuid
+  lessonId         String   @unique @map("lesson_id") @db.VarChar(80)
+  contentFormat    String   @default("pdf_page_text_v1") @map("content_format") @db.VarChar(80)
+  editorialStatus  String   @default("raw_extracted_not_proofread") @map("editorial_status") @db.VarChar(80)
+  pagesJson        Json     @map("pages_json") // { pdf_page: number, raw_text: string }[]
+  createdAt        DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  lesson           Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  @@map("lesson_raw_contents")
+}
+
+model LessonContent {
+  id            String   @id @default(uuid()) @db.Uuid
+  lessonId      String   @unique @map("lesson_id") @db.VarChar(80)
+  contentJson   Json     @map("content_json") // { version: 1, blocks: [...] }
+  schemaVersion Int      @default(1) @map("schema_version")
+  editedById    String?  @map("edited_by") @db.Uuid
+  updatedAt     DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  lesson        Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  editor        User?    @relation(fields: [editedById], references: [id])
+
+  @@map("lesson_contents")
+}
+
+model LessonImage {
+  id         String   @id @default(uuid()) @db.Uuid
+  lessonId   String   @map("lesson_id") @db.VarChar(80)
+  storageKey String   @unique @map("storage_key") @db.Text
+  altText    String?  @map("alt_text") @db.Text
+  caption    String?  @db.Text
+  sortOrder  Int      @default(0) @map("sort_order")
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  lesson     Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  @@map("lesson_images")
+}
+
+// 3. QUẢN TRỊ, PHIÊN BẢN VÀ KIỂM TOÁN HỆ THỐNG
+model User {
+  id           String          @id @default(uuid()) @db.Uuid
+  email        String          @unique @db.VarChar(254)
+  passwordHash String?         @map("password_hash") @db.Text
+  role         String          @default("admin")
+  isActive     Boolean         @default(true) @map("is_active")
+  createdAt    DateTime        @default(now()) @map("created_at") @db.Timestamptz
+
+  contents     LessonContent[]
+  revisions    LessonRevision[]
+  auditLogs    AuditLog[]
+
+  @@map("users")
+}
+
+model LessonRevision {
+  id             String   @id @default(uuid()) @db.Uuid
+  lessonId       String   @map("lesson_id") @db.VarChar(80)
+  revisionNumber Int      @map("revision_number")
+  snapshotJson   Json     @map("snapshot_json")
+  editedById     String?  @map("edited_by") @db.Uuid
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  lesson         Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  editor         User?    @relation(fields: [editedById], references: [id])
+
+  @@unique([lessonId, revisionNumber])
+  @@map("lesson_revisions")
+}
+
+model AuditLog {
+  id         String   @id @default(uuid()) @db.Uuid
+  actorId    String?  @map("actor_id") @db.Uuid
+  action     String   @db.VarChar(100)
+  entityType String   @map("entity_type") @db.VarChar(100)
+  entityId   String   @map("entity_id") @db.Text
+  metadata   Json?
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  actor      User?    @relation(fields: [actorId], references: [id])
+
+  @@index([actorId, createdAt])
+  @@map("audit_logs")
+}
+
+model SiteSetting {
+  key       String   @id @db.VarChar(100)
+  valueJson Json     @map("value_json")
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  @@map("site_settings")
+}

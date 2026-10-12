@@ -1,0 +1,470 @@
+[
+  {
+    "id": "TEST-AUTH-01",
+    "group": "Unauthenticated Guards",
+    "name": "GET /api/admin/auth/me returns 401 without cookie",
+    "passed": true,
+    "expected": "HTTP 401",
+    "actual": "HTTP 401",
+    "durationMs": 37
+  },
+  {
+    "id": "TEST-AUTH-02",
+    "group": "Unauthenticated Guards",
+    "name": "GET /api/admin/dashboard/stats returns 401 without cookie",
+    "passed": true,
+    "expected": "HTTP 401",
+    "actual": "HTTP 401",
+    "durationMs": 7
+  },
+  {
+    "id": "TEST-AUTH-03",
+    "group": "Unauthenticated Guards",
+    "name": "GET /api/admin/lessons returns 401 without cookie",
+    "passed": true,
+    "expected": "HTTP 401",
+    "actual": "HTTP 401",
+    "durationMs": 11
+  },
+  {
+    "id": "TEST-AUTH-04",
+    "group": "Unauthenticated Guards",
+    "name": "GET /api/admin/lessons/D-MM-A-01 returns 401 without cookie",
+    "passed": true,
+    "expected": "HTTP 401",
+    "actual": "HTTP 401",
+    "durationMs": 15
+  },
+  {
+    "id": "TEST-AUTH-05",
+    "group": "Unauthenticated Guards",
+    "name": "PATCH /api/admin/lessons/D-MM-A-01 returns 401 without cookie",
+    "passed": true,
+    "expected": "HTTP 401",
+    "actual": "HTTP 401",
+    "durationMs": 14
+  },
+  {
+    "id": "TEST-AUTH-06",
+    "group": "Unauthenticated Guards",
+    "name": "POST /api/admin/lessons/D-MM-A-01/mark-ready returns 401 without cookie",
+    "passed": true,
+    "expected": "HTTP 401",
+    "actual": "HTTP 401",
+    "durationMs": 16
+  },
+  {
+    "id": "TEST-AUTH-07",
+    "group": "Unauthenticated Guards",
+    "name": "POST /api/admin/lessons/D-MM-A-01/publish returns 401 without cookie",
+    "passed": true,
+    "expected": "HTTP 401",
+    "actual": "HTTP 401",
+    "durationMs": 15
+  },
+  {
+    "id": "TEST-AUTH-08",
+    "group": "Unauthenticated Guards",
+    "name": "GET /api/admin/media returns 401 without cookie",
+    "passed": true,
+    "expected": "HTTP 401",
+    "actual": "HTTP 401",
+    "durationMs": 15
+  },
+  {
+    "id": "TEST-AUTH-09",
+    "group": "Unauthenticated Guards",
+    "name": "GET /api/admin/audit-logs returns 401 without cookie",
+    "passed": true,
+    "expected": "HTTP 401",
+    "actual": "HTTP 401",
+    "durationMs": 16
+  },
+  {
+    "id": "TEST-SEC-01",
+    "group": "Authentication & CSRF",
+    "name": "Login with wrong password rejected with 401 INVALID_CREDENTIALS",
+    "passed": true,
+    "expected": "HTTP 401",
+    "actual": "HTTP 401 (INVALID_CREDENTIALS)",
+    "durationMs": 97
+  },
+  {
+    "id": "TEST-SEC-02",
+    "group": "Authentication & CSRF",
+    "name": "Login with valid credentials sets HttpOnly, SameSite=lax cookie",
+    "passed": true,
+    "expected": "HTTP 200 + Cookie",
+    "actual": "HTTP 200, HttpOnly=true, SameSite=true",
+    "durationMs": 76
+  },
+  {
+    "id": "TEST-SEC-03",
+    "group": "Authentication & CSRF",
+    "name": "Tampered token signature is rejected with 401 UNAUTHORIZED",
+    "passed": true,
+    "expected": "HTTP 401",
+    "actual": "HTTP 401",
+    "durationMs": 15
+  },
+  {
+    "id": "TEST-SEC-04",
+    "group": "Authentication & CSRF",
+    "name": "Expired token (exp in past) is rejected with 401 UNAUTHORIZED",
+    "passed": true,
+    "expected": "HTTP 401",
+    "actual": "HTTP 401",
+    "durationMs": 15
+  },
+  {
+    "id": "TEST-SEC-05",
+    "group": "Authentication & CSRF",
+    "name": "Non-existent user ID token is rejected with 401 ACCOUNT_INACTIVE",
+    "passed": true,
+    "expected": "HTTP 401",
+    "actual": "HTTP 401 (ACCOUNT_INACTIVE)",
+    "durationMs": 19
+  },
+  {
+    "id": "TEST-SEC-06",
+    "group": "Authentication & CSRF",
+    "name": "CSRF Protection: Sec-Fetch-Site: cross-site on POST rejected with 403 CSRF_DETECTED",
+    "passed": true,
+    "expected": "HTTP 403",
+    "actual": "HTTP 403 (CSRF_DETECTED)",
+    "durationMs": 12
+  },
+  {
+    "id": "TEST-SEC-07",
+    "group": "Authentication & CSRF",
+    "name": "CSRF Protection: Mismatched Origin header on PATCH rejected with 403 CSRF_DETECTED",
+    "passed": true,
+    "expected": "HTTP 403",
+    "actual": "HTTP 403 (CSRF_DETECTED)",
+    "durationMs": 15
+  },
+  {
+    "id": "TEST-SEC-08",
+    "group": "Authentication & CSRF",
+    "name": "POST /logout clears cookie with maxAge=0 and revokes session",
+    "passed": true,
+    "expected": "HTTP 200 + cleared cookie",
+    "actual": "HTTP 200, cleared=true",
+    "durationMs": 80
+  },
+  {
+    "id": "TEST-MEDIA-01",
+    "group": "Media Storage & Security",
+    "name": "Upload genuine PNG image succeeds and stores in private data/media/",
+    "passed": true,
+    "expected": "HTTP 200 + /api/media/ url",
+    "actual": "HTTP 200, url=/api/media/477125cb-7ebd-4fa2-869b-03b0d375d641.png, privateDir=true, notInPublic=true",
+    "durationMs": 14
+  },
+  {
+    "id": "TEST-MEDIA-02",
+    "group": "Media Storage & Security",
+    "name": "Upload genuine JPEG image with magic bytes validation succeeds",
+    "passed": true,
+    "expected": "HTTP 200",
+    "actual": "HTTP 200",
+    "durationMs": 6
+  },
+  {
+    "id": "TEST-MEDIA-03",
+    "group": "Media Storage & Security",
+    "name": "Upload file exceeding 5MB is rejected with 400 FILE_TOO_LARGE",
+    "passed": true,
+    "expected": "HTTP 400",
+    "actual": "HTTP 400 (FILE_TOO_LARGE)",
+    "durationMs": 19
+  },
+  {
+    "id": "TEST-MEDIA-04",
+    "group": "Media Storage & Security",
+    "name": "Upload spoofed file (text content disguised as image/png) rejected with 400",
+    "passed": true,
+    "expected": "HTTP 400",
+    "actual": "HTTP 400 (Nội dung nhị phân không hợp lệ hoặc bị giả mạo. Chỉ chấp nhận định dạng ảnh JPEG, PNG, WEBP thực tế.)",
+    "durationMs": 23
+  },
+  {
+    "id": "TEST-MEDIA-05",
+    "group": "Media Storage & Security",
+    "name": "Path traversal in media endpoint (/api/media/../../etc/passwd) rejected with 400",
+    "passed": true,
+    "expected": "HTTP 400",
+    "actual": "HTTP 404",
+    "durationMs": 12
+  },
+  {
+    "id": "TEST-MEDIA-06",
+    "group": "Media Storage & Security",
+    "name": "Unauthenticated request for private/draft image rejected with 401 UNAUTHORIZED_MEDIA",
+    "passed": true,
+    "expected": "HTTP 401",
+    "actual": "HTTP 401 (UNAUTHORIZED_MEDIA)",
+    "durationMs": 19
+  },
+  {
+    "id": "TEST-MEDIA-07",
+    "group": "Media Storage & Security",
+    "name": "Authenticated admin request for private/draft image succeeds with 200 OK",
+    "passed": true,
+    "expected": "HTTP 200",
+    "actual": "HTTP 200 (content-type: image/png)",
+    "durationMs": 15
+  },
+  {
+    "id": "TEST-MEDIA-08",
+    "group": "Media Storage & Security",
+    "name": "Published lesson image is accessible publicly without authentication",
+    "passed": true,
+    "expected": "HTTP 200 Public",
+    "actual": "HTTP 200 (public access: true)",
+    "durationMs": 111
+  },
+  {
+    "id": "TEST-DASH-01",
+    "group": "Dashboard Stats",
+    "name": "GET /api/admin/dashboard/stats returns 200 OK",
+    "passed": true,
+    "expected": "HTTP 200",
+    "actual": "HTTP 200",
+    "durationMs": 169
+  },
+  {
+    "id": "TEST-DASH-02",
+    "group": "Dashboard Stats",
+    "name": "Dashboard confirms 156 total lessons in overview",
+    "passed": true,
+    "expected": "156",
+    "actual": "156",
+    "durationMs": 0
+  },
+  {
+    "id": "TEST-DASH-03",
+    "group": "Dashboard Stats",
+    "name": "Dashboard returns exactly 4 study levels breakdown",
+    "passed": true,
+    "expected": "4 levels",
+    "actual": "4 levels",
+    "durationMs": 0
+  },
+  {
+    "id": "TEST-DASH-04",
+    "group": "Dashboard Stats",
+    "name": "Dashboard returns exactly 3 study categories breakdown",
+    "passed": true,
+    "expected": "3 categories",
+    "actual": "3 categories",
+    "durationMs": 0
+  },
+  {
+    "id": "TEST-DASH-05",
+    "group": "Dashboard Stats",
+    "name": "Sum of 4 study levels equals 156 (32 + 38 + 41 + 45)",
+    "passed": true,
+    "expected": "156",
+    "actual": "156",
+    "durationMs": 0
+  },
+  {
+    "id": "TEST-DASH-06",
+    "group": "Dashboard Stats",
+    "name": "Dashboard returns recent audit logs array with records",
+    "passed": true,
+    "expected": ">= 1 log",
+    "actual": "10 logs",
+    "durationMs": 0
+  },
+  {
+    "id": "TEST-LESSON-01",
+    "group": "Lesson Queries",
+    "name": "GET /api/admin/lessons returns 156 total lessons in meta",
+    "passed": true,
+    "expected": "156",
+    "actual": "156",
+    "durationMs": 15
+  },
+  {
+    "id": "TEST-LESSON-02",
+    "group": "Lesson Queries",
+    "name": "Filter by levelId=mo-mat returns exactly 32 lessons",
+    "passed": true,
+    "expected": "32",
+    "actual": "32",
+    "durationMs": 30
+  },
+  {
+    "id": "TEST-LESSON-03",
+    "group": "Lesson Queries",
+    "name": "Filter by categoryId=phat-phap returns exactly 54 lessons",
+    "passed": true,
+    "expected": "54",
+    "actual": "54",
+    "durationMs": 25
+  },
+  {
+    "id": "TEST-LESSON-04",
+    "group": "Lesson Queries",
+    "name": "Search filter matches title or lesson ID",
+    "passed": true,
+    "expected": ">= 1 result",
+    "actual": "1 matches",
+    "durationMs": 13
+  },
+  {
+    "id": "TEST-LESSON-05",
+    "group": "Lesson Queries",
+    "name": "GET /api/admin/lessons/D-MM-A-01 returns full details with rawContent",
+    "passed": true,
+    "expected": "ID D-MM-A-01 + rawContent",
+    "actual": "ID: D-MM-A-01, hasRaw: true",
+    "durationMs": 21
+  },
+  {
+    "id": "TEST-LESSON-06",
+    "group": "Lesson Queries",
+    "name": "Raw content includes pages_json array with pdf_page and raw_text",
+    "passed": true,
+    "expected": "Array of pages",
+    "actual": "pagesCount: 5, validFormat: true",
+    "durationMs": 12
+  },
+  {
+    "id": "TEST-EDIT-01",
+    "group": "Block Editor & Concurrency",
+    "name": "PATCH /api/admin/lessons/D-MM-A-01 with structured blocks returns 200 OK",
+    "passed": true,
+    "expected": "HTTP 200",
+    "actual": "HTTP 200",
+    "durationMs": 35
+  },
+  {
+    "id": "TEST-EDIT-02",
+    "group": "Block Editor & Concurrency",
+    "name": "Lesson version is incremented from N to N+1",
+    "passed": true,
+    "expected": "v7",
+    "actual": "v7",
+    "durationMs": 11
+  },
+  {
+    "id": "TEST-EDIT-03",
+    "group": "Block Editor & Concurrency",
+    "name": "Content update transitions contentStatus to 'editing'",
+    "passed": true,
+    "expected": "editing",
+    "actual": "editing",
+    "durationMs": 16
+  },
+  {
+    "id": "TEST-EDIT-04",
+    "group": "Block Editor & Concurrency",
+    "name": "Optimistic Concurrency: Sending outdated version returns 409 CONCURRENCY_CONFLICT",
+    "passed": true,
+    "expected": "HTTP 409 CONCURRENCY_CONFLICT",
+    "actual": "HTTP 409 (CONCURRENCY_CONFLICT)",
+    "durationMs": 11
+  },
+  {
+    "id": "TEST-EDIT-05",
+    "group": "Block Editor & Concurrency",
+    "name": "Revision snapshot recorded in lesson_revisions without modifying raw text",
+    "passed": true,
+    "expected": "Revision exists + raw intact",
+    "actual": "revisions: 6, rawPages: 5",
+    "durationMs": 20
+  },
+  {
+    "id": "TEST-WF-01",
+    "group": "5-Step Workflow",
+    "name": "Step 1 (Raw Guard): Publishing raw lesson (D-MM-A-07) rejected with 400 LESSON_NOT_READY",
+    "passed": true,
+    "expected": "HTTP 400 LESSON_NOT_READY",
+    "actual": "HTTP 400 (LESSON_NOT_READY)",
+    "durationMs": 15
+  },
+  {
+    "id": "TEST-WF-02",
+    "group": "5-Step Workflow",
+    "name": "Step 2 (Edit): Update content for D-MM-A-07 transitions status to 'editing'",
+    "passed": true,
+    "expected": "editing",
+    "actual": "HTTP 200, status: editing",
+    "durationMs": 19
+  },
+  {
+    "id": "TEST-WF-03",
+    "group": "5-Step Workflow",
+    "name": "Step 3 (Mark Ready): POST /mark-ready transitions status to 'ready'",
+    "passed": true,
+    "expected": "ready",
+    "actual": "HTTP 200, status: ready",
+    "durationMs": 14
+  },
+  {
+    "id": "TEST-WF-04",
+    "group": "5-Step Workflow",
+    "name": "Step 4 (Publish): POST /publish transitions status to 'published' with publishedAt timestamp",
+    "passed": true,
+    "expected": "published",
+    "actual": "HTTP 200, publishStatus: published, publishedAt: true",
+    "durationMs": 15
+  },
+  {
+    "id": "TEST-WF-05",
+    "group": "5-Step Workflow",
+    "name": "Verification: Public reader (/bai-hoc/d-mm-a-07-lay-phat-niem-phat) returns HTTP 200 for published lesson",
+    "passed": true,
+    "expected": "HTTP 200",
+    "actual": "HTTP 200",
+    "durationMs": 24
+  },
+  {
+    "id": "TEST-WF-06",
+    "group": "5-Step Workflow",
+    "name": "Step 5 (Unpublish): POST /unpublish reverts to 'draft' and reader immediately returns 404",
+    "passed": true,
+    "expected": "HTTP 200 unpublish + HTTP 404 reader",
+    "actual": "unpublishStatus: draft, readerStatus: HTTP 404",
+    "durationMs": 25
+  },
+  {
+    "id": "TEST-ISOLATION-01",
+    "group": "Main DB Isolation",
+    "name": "Main DB sentrang: publishedLessons === 0 (no lessons published in production)",
+    "passed": true,
+    "expected": "0 published",
+    "actual": "0 published",
+    "durationMs": 24
+  },
+  {
+    "id": "TEST-ISOLATION-02",
+    "group": "Main DB Isolation",
+    "name": "Main DB sentrang: draftLessons === 156 (all lessons remain in draft)",
+    "passed": true,
+    "expected": "156 draft",
+    "actual": "156 draft",
+    "durationMs": 1
+  },
+  {
+    "id": "TEST-ISOLATION-03",
+    "group": "Main DB Isolation",
+    "name": "Main DB sentrang: content_status has exactly 154 raw_extracted and 2 ready (demo D-MM-A-01, D-MM-A-03)",
+    "passed": true,
+    "expected": "154 raw + 2 ready",
+    "actual": "154 raw, 2 ready, 2 lesson_contents",
+    "durationMs": 3
+  },
+  {
+    "id": "TEST-ISOLATION-04",
+    "group": "Main DB Isolation",
+    "name": "Main DB port 3001: Public reader strictly returns 404 for all draft lessons",
+    "passed": true,
+    "expected": "HTTP 404",
+    "actual": "D-01: HTTP 404, D-03: HTTP 404",
+    "durationMs": 49
+  }
+]

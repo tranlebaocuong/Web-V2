@@ -1,0 +1,89 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #176B4A;
+  --color-primary-hover: #12553A;
+  --color-primary-light: #EBF4F0;
+  --color-secondary: #345E88;
+  --color-secondary-hover: #294B6D;
+  --color-secondary-light: #EAF0F6;
+  --color-background: #F8F7F2;
+  --color-surface: #FFFFFF;
+  --color-paper: #F5F0E4;
+  --color-accent: #D4AD69;
+  --color-accent-hover: #C29B57;
+  --color-accent-light: #FBF6EC;
+  --color-ink: #24352E;
+  --color-ink-muted: #536B61;
+  --color-border: #E3E1D8;
+  --color-border-subtle: #EBE9E1;
+
+  --font-sans: var(--font-be-vietnam-pro), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+  --radius-card: 16px;
+  --radius-btn: 12px;
+  --radius-badge: 9999px;
+
+  --max-w-container: 1200px;
+  --max-w-reader: 740px;
+  --h-header-desktop: 72px;
+  --h-header-mobile: 60px;
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    color: var(--color-ink);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+}
+
+/* Reader paper / theme modes */
+body.mode-paper {
+  background-color: var(--color-paper);
+}
+
+.reading-theme-light {
+  background-color: #F8F7F2;
+  color: #24352E;
+}
+
+.reading-theme-sepia {
+  background-color: #F5F0E4;
+  color: #2E2619;
+}
+
+.reading-theme-dark {
+  background-color: #1A2420;
+  color: #E2EAE5;
+}
+
+.reading-theme-dark .text-muted {
+  color: #8CA096;
+}
+
+.reading-theme-dark .bg-surface-reader {
+  background-color: #232E29;
+  border-color: #2F3D36;
+}
+
+/* Accessible focus visible */
+:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}

@@ -1,0 +1,52 @@
+[
+  {
+    "name": "SCR-01 Trang chủ",
+    "url": "http://localhost:3001/",
+    "scores": {
+      "performance": 96,
+      "accessibility": 96,
+      "bestPractices": 96,
+      "seo": 100
+    }
+  },
+  {
+    "name": "SCR-02 Ngành Đồng",
+    "url": "http://localhost:3001/nganh-dong",
+    "scores": {
+      "performance": 98,
+      "accessibility": 94,
+      "bestPractices": 96,
+      "seo": 100
+    }
+  },
+  {
+    "name": "SCR-03 Bậc Mở Mắt",
+    "url": "http://localhost:3001/nganh-dong/mo-mat",
+    "scores": {
+      "performance": 98,
+      "accessibility": 96,
+      "bestPractices": 96,
+      "seo": 100
+    }
+  },
+  {
+    "name": "SCR-06 Tìm kiếm",
+    "url": "http://localhost:3001/tim-kiem",
+    "scores": {
+      "performance": 97,
+      "accessibility": 94,
+      "bestPractices": 96,
+      "seo": 91
+    }
+  },
+  {
+    "name": "SCR-05 Đọc bài học",
+    "url": "http://localhost:3002/bai-hoc/d-mm-a-01-lich-su-duc-phat-thich-ca",
+    "scores": {
+      "performance": 97,
+      "accessibility": 98,
+      "bestPractices": 96,
+      "seo": 91
+    }
+  }
+]

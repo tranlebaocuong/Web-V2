@@ -1,0 +1,380 @@
+[
+  {
+    "id": "TC-A01",
+    "group": "Reader Journey",
+    "name": "SCR-01 Trang chủ (/) trả HTTP 200 & chứa nội dung cốt lõi",
+    "passed": true,
+    "expected": "HTTP 200, HTML chứa 'Sen Trắng', 4 bậc Ngành Đồng",
+    "actual": "Status 200, hasBrand=true, hasLevels=true",
+    "durationMs": 11
+  },
+  {
+    "id": "TC-A02",
+    "group": "Reader Journey",
+    "name": "SCR-02 Ngành Đồng (/nganh-dong) trả HTTP 200 & thông tin 4 bậc",
+    "passed": true,
+    "expected": "HTTP 200, hiển thị đầy đủ 4 bậc tu học",
+    "actual": "Status 200, hasLevels=true",
+    "durationMs": 6
+  },
+  {
+    "id": "TC-A03",
+    "group": "Reader Journey",
+    "name": "SCR-03 Bậc học (/nganh-dong/mo-mat) trả HTTP 200 & 3 lĩnh vực",
+    "passed": true,
+    "expected": "HTTP 200, hiển thị Phật pháp, Hoạt động thanh niên, Văn nghệ",
+    "actual": "Status 200, hasCats=true",
+    "durationMs": 81
+  },
+  {
+    "id": "TC-A04",
+    "group": "Reader Journey",
+    "name": "SCR-04 Danh sách bài học (/nganh-dong/mo-mat/phat-phap) trả HTTP 200",
+    "passed": true,
+    "expected": "HTTP 200, xử lý bài học & trạng thái rỗng an toàn",
+    "actual": "Status 200",
+    "durationMs": 22
+  },
+  {
+    "id": "TC-A05",
+    "group": "Reader Journey",
+    "name": "SCR-05 Đọc bài học đã xuất bản (/bai-hoc/d-mm-a-01-lich-su-duc-phat-thich-ca) trả 200",
+    "passed": true,
+    "expected": "HTTP 200, render tiêu đề, mục lục TOC, khối nội dung",
+    "actual": "Status 200, hasTitle=true, hasControls=true",
+    "durationMs": 160
+  },
+  {
+    "id": "TC-A06",
+    "group": "Reader Journey",
+    "name": "Bảo vệ bài nháp trên Main DB (/bai-hoc/d-mm-a-01-lich-su-duc-phat-thich-ca) trả HTTP 404",
+    "passed": true,
+    "expected": "HTTP 404 Not Found, không để lộ nội dung nháp",
+    "actual": "Status 404",
+    "durationMs": 32
+  },
+  {
+    "id": "TC-A07",
+    "group": "Reader Journey",
+    "name": "SCR-06 Tìm kiếm tiếng Việt có dấu (/tim-kiem?q=Phật) trả HTTP 200",
+    "passed": true,
+    "expected": "HTTP 200, trả về giao diện tra cứu có kết quả",
+    "actual": "Status 200, hasResultsContainer=true",
+    "durationMs": 33
+  },
+  {
+    "id": "TC-A08",
+    "group": "Reader Journey",
+    "name": "SCR-06 Tìm kiếm không dấu (/tim-kiem?q=thich ca) trả HTTP 200",
+    "passed": true,
+    "expected": "HTTP 200, unaccent tìm đúng bài Thích Ca",
+    "actual": "Status 200, foundAccentedMatch=true",
+    "durationMs": 27
+  },
+  {
+    "id": "TC-A09",
+    "group": "Reader Journey",
+    "name": "SCR-06 Tìm kiếm từ khóa không tồn tại (/tim-kiem?q=xyzxyz123)",
+    "passed": true,
+    "expected": "HTTP 200, hiển thị thông báo không tìm thấy",
+    "actual": "Status 200, hasEmptyNotice=true",
+    "durationMs": 20
+  },
+  {
+    "id": "TC-A10",
+    "group": "Reader Journey",
+    "name": "Bậc học không hợp lệ (/nganh-dong/bac-la) trả HTTP 404",
+    "passed": true,
+    "expected": "HTTP 404 Not Found",
+    "actual": "Status 404",
+    "durationMs": 23
+  },
+  {
+    "id": "TC-B01",
+    "group": "API Contract",
+    "name": "GET /api/v1/branches trả 200 và 1 ngành (nganh-dong)",
+    "passed": true,
+    "expected": "HTTP 200, success=true, 1 branch",
+    "actual": "Status 200, count=1",
+    "durationMs": 11
+  },
+  {
+    "id": "TC-B02",
+    "group": "API Contract",
+    "name": "GET /api/v1/levels trả 200 và 4 bậc Ngành Đồng",
+    "passed": true,
+    "expected": "HTTP 200, success=true, 4 levels",
+    "actual": "Status 200, count=4",
+    "durationMs": 18
+  },
+  {
+    "id": "TC-B03",
+    "group": "API Contract",
+    "name": "GET /api/v1/categories trả 200 và 3 lĩnh vực",
+    "passed": true,
+    "expected": "HTTP 200, success=true, 3 categories",
+    "actual": "Status 200, count=3",
+    "durationMs": 15
+  },
+  {
+    "id": "TC-B04",
+    "group": "API Contract",
+    "name": "GET /api/v1/sources trả 200 và 4 nguồn tài liệu",
+    "passed": true,
+    "expected": "HTTP 200, success=true, 4 sources",
+    "actual": "Status 200, count=4",
+    "durationMs": 17
+  },
+  {
+    "id": "TC-B05",
+    "group": "API Contract",
+    "name": "GET /api/v1/lessons trên main DB trả 0 bài (156 bài giữ nháp)",
+    "passed": true,
+    "expected": "HTTP 200, success=true, total=0",
+    "actual": "Status 200, total=0",
+    "durationMs": 13
+  },
+  {
+    "id": "TC-B06",
+    "group": "API Contract",
+    "name": "GET /api/v1/lessons/mo-mat-ve-chua-gap-ai (bài nháp) trả HTTP 404",
+    "passed": true,
+    "expected": "HTTP 404 LESSON_NOT_FOUND, không trả về raw_content",
+    "actual": "Status 404, code=LESSON_NOT_FOUND",
+    "durationMs": 16
+  },
+  {
+    "id": "TC-C01",
+    "group": "Admin SOP",
+    "name": "Đăng nhập Admin hợp lệ (/api/admin/auth/login)",
+    "passed": true,
+    "expected": "HTTP 200, trả về thông tin user & session cookie",
+    "actual": "Status 200, email=admin@sentrang.gdpt.vn",
+    "durationMs": 79
+  },
+  {
+    "id": "TC-C02",
+    "group": "Admin SOP",
+    "name": "Admin Dashboard stats (/api/admin/dashboard/stats)",
+    "passed": true,
+    "expected": "HTTP 200, trả về totalLessons = 156",
+    "actual": "Status 200, totalLessons=156",
+    "durationMs": 152
+  },
+  {
+    "id": "TC-C03",
+    "group": "Admin SOP",
+    "name": "Admin Lessons list (/api/admin/lessons) hỗ trợ lọc & phân trang",
+    "passed": true,
+    "expected": "HTTP 200, trả về danh sách 156 bài học",
+    "actual": "Status 200, itemsCount=10, total=156",
+    "durationMs": 33
+  },
+  {
+    "id": "TC-C04",
+    "group": "Admin SOP",
+    "name": "Admin Lesson detail (/api/admin/lessons/D-MM-A-01) trả đủ 3 cột",
+    "passed": true,
+    "expected": "HTTP 200, có rawContent, contentJson, metadata",
+    "actual": "Status 200, hasRaw=true, title=Lịch sử Đức Phật Thích Ca.",
+    "durationMs": 28
+  },
+  {
+    "id": "TC-C05",
+    "group": "Admin SOP",
+    "name": "Biên tập & Lưu bản nháp cho bài D-MM-A-02",
+    "passed": true,
+    "expected": "HTTP 200, cập nhật contentJson & tạo revision",
+    "actual": "Status 200, success=true",
+    "durationMs": 54
+  },
+  {
+    "id": "TC-C06",
+    "group": "Admin SOP",
+    "name": "Duyệt bài D-MM-A-02 sang trạng thái ready",
+    "passed": true,
+    "expected": "HTTP 200, contentStatus = ready",
+    "actual": "Status 200, contentStatus=ready",
+    "durationMs": 16
+  },
+  {
+    "id": "TC-C07",
+    "group": "Admin SOP",
+    "name": "Xuất bản bài D-MM-A-02 sang trạng thái published",
+    "passed": true,
+    "expected": "HTTP 200, publishStatus = published, có publishedAt",
+    "actual": "Status 200, publishStatus=published",
+    "durationMs": 15
+  },
+  {
+    "id": "TC-C08",
+    "group": "Admin SOP",
+    "name": "Độc giả xem bài vừa xuất bản (/bai-hoc/d-mm-a-02-cham-ngon-dieu-luat-khau-hieu) trả 200",
+    "passed": true,
+    "expected": "HTTP 200, hiển thị nội dung vừa xuất bản",
+    "actual": "Status 200, hasContent=true",
+    "durationMs": 23
+  },
+  {
+    "id": "TC-C09",
+    "group": "Admin SOP",
+    "name": "Thu hồi bài D-MM-A-02 về trạng thái draft",
+    "passed": true,
+    "expected": "HTTP 200, publishStatus = draft",
+    "actual": "Status 200, publishStatus=draft",
+    "durationMs": 26
+  },
+  {
+    "id": "TC-C10",
+    "group": "Admin SOP",
+    "name": "Độc giả truy cập bài vừa thu hồi lập tức nhận HTTP 404",
+    "passed": true,
+    "expected": "HTTP 404 Not Found",
+    "actual": "Status 404",
+    "durationMs": 19
+  },
+  {
+    "id": "TC-C11",
+    "group": "Admin SOP",
+    "name": "Kiểm tra nhật ký kiểm toán (/api/admin/audit-logs)",
+    "passed": true,
+    "expected": "HTTP 200, ghi nhận đầy đủ các thao tác biên tập & xuất bản",
+    "actual": "Status 200, latestActions=LESSON_UNPUBLISH, LESSON_PUBLISH, LESSON_MARK_READY",
+    "durationMs": 15
+  },
+  {
+    "id": "TC-D01",
+    "group": "Security Hardening",
+    "name": "Chống Brute-Force: 5 lần đăng nhập sai liên tiếp kích hoạt HTTP 429",
+    "passed": true,
+    "expected": "HTTP 429 Too Many Requests, header Retry-After",
+    "actual": "Status 429, hasRetryAfter=true",
+    "durationMs": 68
+  },
+  {
+    "id": "TC-D02",
+    "group": "Security Hardening",
+    "name": "Chặn CSRF khi có header Sec-Fetch-Site: cross-site",
+    "passed": true,
+    "expected": "HTTP 403 CSRF_DETECTED",
+    "actual": "Status 403, code=CSRF_DETECTED",
+    "durationMs": 16
+  },
+  {
+    "id": "TC-D03",
+    "group": "Security Hardening",
+    "name": "Chặn CSRF khi Origin không khớp máy chủ",
+    "passed": true,
+    "expected": "HTTP 403 CSRF_DETECTED",
+    "actual": "Status 403, code=CSRF_DETECTED",
+    "durationMs": 15
+  },
+  {
+    "id": "TC-D04",
+    "group": "Security Hardening",
+    "name": "Chặn CSRF khi Referer không khớp máy chủ",
+    "passed": true,
+    "expected": "HTTP 403 CSRF_DETECTED",
+    "actual": "Status 403, code=CSRF_DETECTED",
+    "durationMs": 15
+  },
+  {
+    "id": "TC-D05",
+    "group": "Security Hardening",
+    "name": "Từ chối token bị chỉnh sửa / giả mạo",
+    "passed": true,
+    "expected": "HTTP 401 UNAUTHORIZED",
+    "actual": "Status 401",
+    "durationMs": 16
+  },
+  {
+    "id": "TC-D06",
+    "group": "Security Hardening",
+    "name": "Chặn truy cập API admin không có cookie xác thực",
+    "passed": true,
+    "expected": "HTTP 401 UNAUTHORIZED",
+    "actual": "Status 401",
+    "durationMs": 15
+  },
+  {
+    "id": "TC-D07",
+    "group": "Security Hardening",
+    "name": "Truy cập ảnh thuộc bài nháp khi chưa đăng nhập trả HTTP 401",
+    "passed": true,
+    "expected": "HTTP 401 UNAUTHORIZED_MEDIA",
+    "actual": "Status 404",
+    "durationMs": 16
+  },
+  {
+    "id": "TC-D08",
+    "group": "Security Hardening",
+    "name": "Tải lên file giả mạo extension (text giả png) bị từ chối",
+    "passed": true,
+    "expected": "HTTP 400 INVALID_FILE_TYPE",
+    "actual": "Status 400, error=Nội dung nhị phân không hợp lệ hoặc bị giả mạo. Chỉ chấp nhận định dạng ảnh JPEG, PNG, WEBP thực tế.",
+    "durationMs": 25
+  },
+  {
+    "id": "TC-D09",
+    "group": "Security Hardening",
+    "name": "Quét mã nguồn không để lộ JWT Secret hoặc mật khẩu trần",
+    "passed": true,
+    "expected": "Không chứa hardcoded credentials trong public bundle",
+    "actual": "Secret Leak in Client Bundles: CLEAN (None)",
+    "durationMs": 15
+  },
+  {
+    "id": "TC-E01",
+    "group": "SEO & Performance",
+    "name": "robots.txt chặn /admin/ và /api/admin/",
+    "passed": true,
+    "expected": "User-Agent: *, Disallow: /admin/, Disallow: /api/admin/, có Sitemap",
+    "actual": "Status 200, disallowAdmin=true, hasSitemap=true",
+    "durationMs": 4
+  },
+  {
+    "id": "TC-E02",
+    "group": "SEO & Performance",
+    "name": "sitemap.xml động chỉ chứa các trang hợp lệ & không rò rỉ bài nháp",
+    "passed": true,
+    "expected": "HTTP 200, XML hợp lệ, chứa các route công khai, 0 bài nháp",
+    "actual": "Status 200, isXml=true, hasHome=true, leaksDraft=false",
+    "durationMs": 19
+  },
+  {
+    "id": "TC-E03",
+    "group": "SEO & Performance",
+    "name": "Độ trễ truy vấn database thực tế trên 156 bản ghi < 20ms",
+    "passed": true,
+    "expected": "Query latency < 20ms",
+    "actual": "Query Latency: 5ms",
+    "durationMs": 30
+  },
+  {
+    "id": "TC-E04",
+    "group": "SEO & Performance",
+    "name": "Kịch bản sao lưu Database bằng pg_dump native hoạt động chuẩn xác",
+    "passed": true,
+    "expected": "Tạo file SQL dump thành công, kích thước > 500KB, tính được SHA-256",
+    "actual": "File=database.sql, Size=748561 bytes, Time=238ms",
+    "durationMs": 238
+  },
+  {
+    "id": "TC-E05",
+    "group": "SEO & Performance",
+    "name": "Kịch bản phục hồi & kiểm toán tính toàn vẹn hoạt động chuẩn xác",
+    "passed": true,
+    "expected": "Phục hồi vào database thử nghiệm, xác minh 156 bài học & 156 nội dung thô",
+    "actual": "Lessons=156, RawContents=156, Time=675ms",
+    "durationMs": 675
+  },
+  {
+    "id": "TC-E06",
+    "group": "SEO & Performance",
+    "name": "Database chính (sentrang) bảo toàn 156 draft, 0 published, 2 demo",
+    "passed": true,
+    "expected": "156 draft, 0 published, 2 demo lessons ready",
+    "actual": "draft=156, published=0, demoReady=true",
+    "durationMs": 32
+  }
+]

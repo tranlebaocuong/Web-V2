@@ -1,0 +1,104 @@
+[
+  {
+    "category": "Gate 1: DB Config",
+    "test": "Main Database Invariant",
+    "status": "PASS",
+    "details": "Total: 156, Published: 0, Draft: 156, RawContent: 156. Dữ liệu chính bảo toàn 100% draft."
+  },
+  {
+    "category": "Gate 1: DB Config",
+    "test": "Master Data Integrity",
+    "status": "PASS",
+    "details": "1 ngành, 4 bậc, 3 lĩnh vực, 4 nguồn giáo trình."
+  },
+  {
+    "category": "Gate 2: Session",
+    "test": "Admin Login & Token Generation",
+    "status": "PASS",
+    "details": "Đăng nhập thành công, nhận JWT có SID."
+  },
+  {
+    "category": "Gate 2: Session",
+    "test": "Authenticated Access Before Logout",
+    "status": "PASS",
+    "details": "Truy cập /api/admin/auth/me thành công (HTTP 200)."
+  },
+  {
+    "category": "Gate 2: Session",
+    "test": "Server-Side Logout & Revocation",
+    "status": "PASS",
+    "details": "Logout thành công, SID đã được đưa vào blacklist."
+  },
+  {
+    "category": "Gate 2: Session",
+    "test": "Prevent Token Reuse After Logout",
+    "status": "PASS",
+    "details": "Token cũ bị từ chối ngay lập tức: HTTP 401 [SESSION_REVOKED]."
+  },
+  {
+    "category": "Gate 2: Session",
+    "test": "Malformed Token Rejection",
+    "status": "PASS",
+    "details": "Token sai định dạng bị chặn với HTTP 401."
+  },
+  {
+    "category": "Gate 2: Session",
+    "test": "CSRF Defense on State-Changing API",
+    "status": "PASS",
+    "details": "Chặn tấn công CSRF từ Origin lạ (HTTP 403 FORBIDDEN_CSRF)."
+  },
+  {
+    "category": "Gate 2: Session",
+    "test": "Inactive User Login Rejection",
+    "status": "PASS",
+    "details": "Tài khoản đã vô hiệu hóa (is_active=false) bị từ chối đăng nhập."
+  },
+  {
+    "category": "Gate 3: Media & Cache",
+    "test": "Published Media Public Access & ETag",
+    "status": "PASS",
+    "details": "Status 200, ETag: \"f829b914fc47cfc9c0747c119c27cf1b\", Cache-Control: public, max-age=1800, s-maxage=3600, must-revalidate"
+  },
+  {
+    "category": "Gate 3: Media & Cache",
+    "test": "Conditional GET 304 Not Modified",
+    "status": "PASS",
+    "details": "HTTP 304 trả về thành công khi ETag khớp."
+  },
+  {
+    "category": "Gate 3: Media & Cache",
+    "test": "Instant Media Revocation Upon Unpublish",
+    "status": "PASS",
+    "details": "Thu hồi quyền truy cập công khai ngay lập tức: HTTP 401, Cache-Control: no-store, no-cache, must-revalidate, proxy-revalidate"
+  },
+  {
+    "category": "Gate 3: Media & Cache",
+    "test": "Admin Draft Media Preview",
+    "status": "PASS",
+    "details": "Admin xem trước ảnh bài draft thành công: HTTP 200, Cache-Control: private, no-store."
+  },
+  {
+    "category": "Gate 4: SEO & Privacy",
+    "test": "Admin Noindex Meta Tags",
+    "status": "PASS",
+    "details": "Khu vực quản trị có thẻ meta robots: noindex, nofollow, noimageindex, nocache."
+  },
+  {
+    "category": "Gate 4: SEO & Privacy",
+    "test": "Robots.txt Protection",
+    "status": "PASS",
+    "details": "robots.txt chặn bot lập chỉ mục /admin và /api/admin/."
+  },
+  {
+    "category": "Gate 4: SEO & Privacy",
+    "test": "Sitemap.xml Hygiene",
+    "status": "PASS",
+    "details": "sitemap.xml hợp lệ và không chứa bất kỳ URL quản trị nào."
+  },
+  {
+    "category": "Gate 5: Backup & Restore",
+    "test": "Full Backup Bundle & Manifest Integrity",
+    "status": "PASS",
+    "details": "Bundle bundle_sentrang_20261012_024321 có SQL (731.0 KB), 10 media assets, SHA-256 hash manifest hợp lệ."
+  }
+]

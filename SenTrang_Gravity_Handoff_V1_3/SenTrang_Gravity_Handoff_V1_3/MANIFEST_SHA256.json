@@ -1,0 +1,62 @@
+[
+  {
+    "file": "00_READ_ME_FIRST.md",
+    "bytes": 2781,
+    "sha256": "ee3ad22bdf1698acdd3da77d6467ee7d96fc1eab5f9c23e6eabb551138ef985a"
+  },
+  {
+    "file": "01_SPECIFICATIONS/01_SRS_PhamVi_NghiepVu.md",
+    "bytes": 7088,
+    "sha256": "380c45c0552d842d3bc96450418edf539c43e805a9c48081af49fc9b4762bf89"
+  },
+  {
+    "file": "01_SPECIFICATIONS/02_Database_Schema_DataMapping.md",
+    "bytes": 8177,
+    "sha256": "cc9e59675a09a1209b3b0cfc956c1f9371a0b27b38732a748bbb40efb019d97b"
+  },
+  {
+    "file": "01_SPECIFICATIONS/03_API_Contract.md",
+    "bytes": 5795,
+    "sha256": "6dc04fc046d6ef79d5de78182681fd9c1d93aec60114f786923c81926f302d5d"
+  },
+  {
+    "file": "01_SPECIFICATIONS/04_UI_Blueprint_DesignSystem.md",
+    "bytes": 6108,
+    "sha256": "956e6954e17e603f2e0073f8ef622c6bfa0d49878b10e1ab86c4ea89e070d28a"
+  },
+  {
+    "file": "01_SPECIFICATIONS/05_TestPlan_Acceptance.md",
+    "bytes": 3266,
+    "sha256": "78a184f30fab51eecd0366731766f3c542ec8a367b334c6f66bbc3038837a067"
+  },
+  {
+    "file": "01_SPECIFICATIONS/06_Import_MasterData_Guide.md",
+    "bytes": 2353,
+    "sha256": "3e2f426f4afa4ac8fda1a9ddaeccfd8fe81ab656426dd76afdf13165d5908c02"
+  },
+  {
+    "file": "02_MASTER_DATA/SenTrang_MasterData_NganhDong_V1_2.csv",
+    "bytes": 36771,
+    "sha256": "522c85828cae53c9c99e5c292cf687720614bfb38d2caa3862ddb92c7a9b231a"
+  },
+  {
+    "file": "02_MASTER_DATA/SenTrang_MasterData_NganhDong_V1_2.json",
+    "bytes": 771005,
+    "sha256": "9874d2ea7ba17d85e4ab4cfba876f2013d2d75f635df8780fa753be0ddf48368"
+  },
+  {
+    "file": "02_MASTER_DATA/SenTrang_MasterData_NganhDong_V1_2.xlsx",
+    "bytes": 41980,
+    "sha256": "2f6c18408bbd9e7e8a901c7e1261b8fc442f7af49dbf2d2f89a37c8c1aa73356"
+  },
+  {
+    "file": "02_MASTER_DATA/SenTrang_MasterData_README_V1_2.md",
+    "bytes": 1825,
+    "sha256": "ca08fe0330046188fa09fa8a98795729ffff611225be2ce0927b4055f43cea80"
+  },
+  {
+    "file": "03_HANDOFF/07_Gravity_Kickoff_Prompt.md",
+    "bytes": 1970,
+    "sha256": "24e6536be4cfce8313805a804631b7d89e6b4083bca59784195644c4903dba05"
+  }
+]
