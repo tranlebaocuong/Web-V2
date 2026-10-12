@@ -214,7 +214,7 @@ export async function runMasterDataSeed() {
   for (const l of data.lessons) {
     const existing = await prisma.lesson.findUnique({
       where: { id: l.id },
-      select: { publishStatus: true, contentStatus: true },
+      select: { publishStatus: true, contentStatus: true, summary: true },
     });
 
     const finalPublishStatus =
@@ -225,6 +225,8 @@ export async function runMasterDataSeed() {
       existing && existing.contentStatus === "ready"
         ? "ready"
         : "raw_extracted";
+    const finalSummary =
+      existing && existing.summary ? existing.summary : (l.summary ?? null);
 
     await prisma.lesson.upsert({
       where: { id: l.id },
@@ -238,7 +240,7 @@ export async function runMasterDataSeed() {
         sequence: l.sequence,
         sourcePdfStartPage: l.source_pdf_start_page,
         sourcePdfEndPage: l.source_pdf_end_page,
-        summary: l.summary ?? null,
+        summary: finalSummary,
         publishStatus: finalPublishStatus,
         contentStatus: finalContentStatus,
         importMetadata: {
@@ -277,11 +279,21 @@ export async function runMasterDataSeed() {
   console.log("\n[SEED: 6/6] Nạp 156 Nhóm nội dung thô (lesson_raw_contents)...");
   let rawUpsertCount = 0;
   for (const r of data.lesson_raw_contents) {
+    const existingRaw = await prisma.lessonRawContent.findUnique({
+      where: { lessonId: r.lesson_id },
+      select: { editorialStatus: true },
+    });
+
+    const finalEditorialStatus =
+      existingRaw && existingRaw.editorialStatus && existingRaw.editorialStatus !== "raw"
+        ? existingRaw.editorialStatus
+        : r.editorial_status;
+
     await prisma.lessonRawContent.upsert({
       where: { lessonId: r.lesson_id },
       update: {
         contentFormat: r.content_format,
-        editorialStatus: r.editorial_status,
+        editorialStatus: finalEditorialStatus,
         pagesJson: r.pages as any,
       },
       create: {
