@@ -217,7 +217,17 @@ export async function runCloudSetup() {
 
   // 8. Hậu kiểm định toàn vẹn trực tiếp trên Cloud Database
   console.log("\n• Đang kiểm tra đối soát trực tiếp trên Cloud Database...");
-  const pool = new Pool({ connectionString: directUrl });
+  const isCloud = !directUrl.includes("127.0.0.1") && !directUrl.includes("localhost");
+  const customCaCert = parsedEnv["DATABASE_SSL_CERT"] || process.env.DATABASE_SSL_CERT || undefined;
+  const pool = new Pool({
+    connectionString: directUrl,
+    ssl: isCloud
+      ? {
+          rejectUnauthorized: true,
+          ca: customCaCert,
+        }
+      : undefined,
+  });
   try {
     const res = await pool.query(`
       SELECT 

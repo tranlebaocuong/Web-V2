@@ -1,8 +1,8 @@
-# BÁO CÁO KỸ THUẬT & HƯỚNG DẪN KÍCH HOẠT HỆ THỐNG PRODUCTION
+# BÁO CÁO KỸ THUẬT & HƯỚNG DẪN KÍCH HOẠT HỆ THỐNG PRODUCTION (REVISED V1.1)
 ## DỰ ÁN: TỦ SÁCH ÁO LAM V1.0
 * **Tên miền hoạt động:** `https://cuonghoclaptrinh.io.vn`
-* **Mã tài liệu:** `TUSAC-DOC-OPS-01`
-* **Phiên bản:** 1.0 (Phát hành chính thức)
+* **Mã tài liệu:** `TUSAC-DOC-OPS-01-REV1`
+* **Phiên bản:** 1.1 (Cập nhật chuẩn bảo mật & Master Data V1.2)
 * **Ngày lập:** 12/10/2026
 * **Đơn vị lập:** Ban Kỹ Thuật Dự Án Tủ Sách Áo Lam — GĐPT
 * **Đối tượng tiếp nhận:** Bộ phận Vận hành, Quản trị Hệ thống và Ban Điều Hành Dự Án
@@ -11,144 +11,143 @@
 
 ## MỤC LỤC
 1. [TỔNG QUAN HIỆN TRẠNG HỆ THỐNG TRÊN NETLIFY](#1-tổng-quan-hiện-trạng-hệ-thống-trên-netlify)
-2. [PHÂN TÍCH NGUYÊN NHÂN LỖI (ROOT CAUSE ANALYSIS)](#2-phân-tích-nguyên-nhân-lỗi-root-cause-analysis)
-3. [CÁC CẢI TIẾN MÃ NGUỒN ĐÃ HOÀN TẤT](#3-các-cải-tiến-mã-nguồn-đã-hoàn-tất)
-4. [QUY TRÌNH KÍCH HOẠT CLOUD PRODUCTION (RUNBOOK DÀNH CHO BỘ PHẬN KỸ THUẬT)](#4-quy-trình-kích-hoạt-cloud-production-runbook-dành-cho-bộ-phận-kỹ-thuật)
-5. [CẤU HÌNH BIẾN MÔI TRƯỜNG TRÊN NETLIFY DASHBOARD](#5-cấu-hình-biến-môi-trường-trên-netlify-dashboard)
-6. [QUY TRÌNH KIỂM THỬ XUẤT BẢN BÀI HỌC (E2E VERIFICATION)](#6-quy-trình-kiểm-thử-xuất-bản-bài-học-e2e-verification)
-7. [QUY ĐỊNH BẢO MẬT & KẾ HOẠCH BẢO TRÌ ĐỊNH KỲ](#7-quy-định-bảo-mật--kế-hoạch-bảo-trì-định-kỳ)
+2. [BẰNG CHỨNG XÁC MINH NGUYÊN NHÂN LỖI HTTP 500](#2-bằng-chứng-xác-minh-nguyên-nhân-lỗi-http-500)
+3. [CÁC CẢI TIẾN BẢO MẬT & KẾT NỐI TLS CHÍNH QUY TRONG MÃ NGUỒN](#3-các-cải-tiến-bảo-mật--kết-nối-tls-chính-quy-trong-mã-nguồn)
+4. [HƯỚNG DẪN LẤY CHUỖI KẾT NỐI TỪ SUPABASE DASHBOARD](#4-hướng-dẫn-lấy-chuỗi-kết-nối-từ-supabase-dashboard)
+5. [QUY TRÌNH KÍCH HOẠT CLOUD PRODUCTION (RUNBOOK KỸ THUẬT)](#5-quy-trình-kích-hoạt-cloud-production-runbook-kỹ-thuật)
+6. [CẤU HÌNH BIẾN MÔI TRƯỜNG PHÂN TÁCH TRÊN NETLIFY DASHBOARD](#6-cấu-hình-biến-môi-trường-phân-tách-trên-netlify-dashboard)
+7. [QUY TRÌNH KIỂM THỬ XUẤT BẢN THEO CHUẨN MASTER DATA V1.2](#7-quy-trình-kiểm-thử-xuất-bản-theo-chuẩn-master-data-v12)
+8. [QUY TẮC BẢO MẬT & GIÁM SÁT HẠN MỨC 0 VNĐ](#8-quy-tắc-bảo-mật--giám-sát-hạn-mức-0-vnđ)
 
 ---
 
 ## 1. TỔNG QUAN HIỆN TRẠNG HỆ THỐNG TRÊN NETLIFY
 
-Website **TỦ SÁCH ÁO LAM V1.0** đã được triển khai lên máy chủ Netlify với tên miền `https://cuonghoclaptrinh.io.vn`. Kết quả kiểm định trực tiếp qua các yêu cầu HTTP ghi nhận:
+Website **TỦ SÁCH ÁO LAM V1.0** đã được triển khai lên hạ tầng Netlify kết nối tên miền `https://cuonghoclaptrinh.io.vn`. Kết quả kiểm tra trực tiếp qua giao thức HTTP:
 
 ### 1.1. Giao diện Độc giả Công khai
-* **Trang chủ (`/`):** Hoạt động hoàn hảo (**HTTP 200 OK**). Hiển thị đầy đủ nhận diện thương hiệu Tủ Sách Áo Lam, logo hoa sen trắng kết hợp quyển sách mở, màu chủ đạo xanh lá đậm `#176B4A`, khẩu hiệu *"Nơi tìm kiếm tài liệu tu học mới nhất"*, cấu trúc 4 bậc học Ngành Đồng.
+* **Trang chủ (`/`):** Hoạt động tốt (**HTTP 200 OK**). Nhận diện thương hiệu chuẩn xác: Logo hoa sen kết hợp sách mở trên nền xanh `#176B4A`, khẩu hiệu *"Nơi tìm kiếm tài liệu tu học mới nhất"*, cấu trúc 4 bậc Ngành Đồng.
 
 ### 1.2. Phân hệ Quản trị (`/admin`)
-* **Trang đăng nhập (`/admin/login`):** Hoạt động hoàn hảo (**HTTP 200 OK**). Giao diện form đăng nhập hiển thị đầy đủ, tiêu đề tab *"Quản Trị Học Vụ | Tủ Sách Áo Lam — GĐPT"*, cờ bảo mật SEO `noindex, nofollow, nocache`.
-* **Trang quản trị (`/admin`) & Danh sách bài học (`/admin/lessons`):** Hoạt động đúng thiết kế bảo mật (**HTTP 200 OK & Tự động Redirect**).
-  * Mã nguồn phía máy khách (Client-side) tự động kiểm tra phiên làm việc qua `GET /api/admin/auth/me`.
-  * Khi người dùng chưa đăng nhập, API trả về mã `401 Unauthorized`. Layout lập tức chuyển hướng an toàn người dùng về `/admin/login`.
-* **API Đăng xuất (`/api/admin/auth/logout`):** Hoạt động tốt (**HTTP 200 OK**), xóa cookie phiên `sentrang_admin_session`.
+* **Trang đăng nhập (`/admin/login`):** Hoạt động tốt (**HTTP 200 OK**). Form đăng nhập hoàn chỉnh, tiêu đề *"Quản Trị Học Vụ | Tủ Sách Áo Lam — GĐPT"*, cờ bảo mật SEO `noindex, nofollow, nocache`.
+* **Trang quản trị (`/admin`) & Bài học (`/admin/lessons`):** Hoạt động đúng thiết kế bảo mật (**HTTP 200 OK & Redirect**).
+  * Layout quản trị `AdminClientLayout` tự động gọi kiểm tra phiên `GET /api/admin/auth/me`.
+  * Khi người dùng chưa có cookie hợp lệ, API trả về `401 Unauthorized`, client chuyển hướng an toàn về `/admin/login`.
+* **API Đăng xuất (`/api/admin/auth/logout`):** Hoạt động tốt (**HTTP 200 OK**), xóa cookie `sentrang_admin_session`.
 * **Vị trí khu vực quản trị:** Địa chỉ đăng nhập chính thức là:  
   👉 **`https://cuonghoclaptrinh.io.vn/admin/login`** (hoặc truy cập **`/admin`**).  
-  *Ghi chú: Nút bấm Admin cố tình không hiển thị trên thanh điều hướng công khai để giữ sự trang nghiêm và ngăn người đọc phổ thông tò mò truy cập.*
+  *Ghi chú: Nút bấm Admin cố tình không hiển thị trên Header công khai để bảo vệ tính trang nghiêm và an toàn cho website tu học.*
 
 ---
 
-## 2. PHÂN TÍCH NGUYÊN NHÂN LỖI (ROOT CAUSE ANALYSIS)
+## 2. BẰNG CHỨNG XÁC MINH NGUYÊN NHÂN LỖI HTTP 500
 
-### 2.1. Hiện tượng lỗi
-Khi người dùng thử nhập thông tin đăng nhập hoặc gọi các API truy vấn cơ sở dữ liệu:
-* `POST /api/admin/auth/login` ➜ Trả về **HTTP 500 Internal Server Error** (`{"code":"INTERNAL_ERROR","message":"Lỗi hệ thống khi xử lý đăng nhập."}`).
-* `GET /api/v1/levels` ➜ Trả về **HTTP 500 Internal Server Error** (`{"code":"INTERNAL_SERVER_ERROR","message":"Đã có lỗi xảy ra khi tải danh sách bậc học."}`).
-* `GET /api/v1/search?q=phat` ➜ Trả về **HTTP 500 Internal Server Error** (`{"code":"INTERNAL_SERVER_ERROR","message":"Đã có lỗi xảy ra khi thực hiện tìm kiếm."}`).
+### 2.1. Bằng chứng kiểm thử thực tế từ HTTP Requests
+* `GET /api/v1/levels` ➜ **HTTP 500** (`requestId: req-da9b50d4-aa4c-4c2e-9678-ddcd43c0ef9d`).
+* `GET /api/v1/search?q=phat` ➜ **HTTP 500** (`requestId: req-77caf857-6a54-4df1-9e60-9f14fed29aff`).
+* `POST /api/admin/auth/login` ➜ **HTTP 500** (`{"code":"INTERNAL_ERROR","message":"Lỗi hệ thống khi xử lý đăng nhập."}`).
+* `POST /api/admin/auth/logout` ➜ **HTTP 200 OK** (`{"message":"Đăng xuất thành công."}`).
+* `GET /api/admin/auth/me` ➜ **HTTP 401 Unauthorized** (khi chưa gửi cookie).
 
-### 2.2. Nguyên nhân cốt lõi
-1. **Cơ sở dữ liệu Supabase Cloud chưa được chạy Migration:**
-   * Dự án Supabase của tổ chức vừa được tạo nhưng **hoàn toàn trống** (chưa có các bảng dữ liệu `lessons`, `users`, `levels`, `categories`, `site_settings`...).
-   * Khi API backend gọi truy vấn `prisma.user.findUnique` hoặc `prisma.level.findMany`, hệ quản trị PostgreSQL trên Supabase ném lỗi cấu trúc: `relation "users" does not exist`. Do đó, serverless function bắt lỗi và trả về HTTP 500.
-2. **Chưa có tài khoản Quản trị viên (Admin Production):**
-   * Trong cơ sở dữ liệu Cloud chưa tồn tại bất kỳ tài khoản người dùng nào. Theo nguyên tắc bảo mật, hệ thống tuyệt đối không dùng tài khoản demo cục bộ trên môi trường Production.
-3. **Biến môi trường trên Netlify Functions cần đầy đủ Scope:**
-   * Biến `DATABASE_URL` trên Netlify cần đảm bảo cấp quyền cho cả hai phạm vi: **Builds** và **Functions (Runtime)**.
-
----
-
-## 3. CÁC CẢI TIẾN MÃ NGUỒN ĐÃ HOÀN TẤT
-
-Ban Kỹ thuật đã hoàn thiện và đẩy (push) các bản cập nhật mới nhất lên nhánh `main` (Commit `32eeb78`):
-1. **Tối ưu hóa Prisma cho môi trường Serverless (Netlify Functions):**
-   * Cơ chế **Lazy Initialization**: Chỉ kết nối database khi có yêu cầu thực tế, không gây lỗi khi build tĩnh Next.js.
-   * Kích hoạt tự động **SSL Cloud** (`rejectUnauthorized: false`) khi kết nối máy chủ Supabase từ môi trường Netlify.
-   * Giới hạn `max: 5` kết nối đồng thời và tăng thời gian chờ `connectionTimeoutMillis: 10000` (10 giây) để tránh nghẽn mạng xuyên vùng địa lý và tránh chạm hạn mức kết nối miễn phí của Supabase.
-2. **Cơ chế nạp dữ liệu an toàn (Fail-Fast Pre-flight):**
-   * Script nạp dữ liệu tự động kiểm tra, chặn kết nối nhầm máy local và che giấu thông tin mật khẩu dưới dạng `***`.
-   * Cập nhật seed đảm bảo tính **Idempotent 100%**: Không ghi đè mất các bài học đã qua biên tập.
+### 2.2. Đối chiếu mã nguồn và nguyên nhân kỹ thuật
+1. **Phân tách giữa API không chạm DB và API có chạm DB:**
+   * Các endpoint không truy vấn DB (`/admin/login`, `/api/admin/auth/logout`, `/api/admin/auth/me` khi chưa có cookie) hoạt động bình thường (200 / 401).
+   * Mọi endpoint gọi `prisma` (`prisma.level.findMany`, `prisma.user.findUnique`, `prisma.$queryRaw`) đều phát sinh lỗi 500.
+2. **Đối chiếu Netlify Function Logs & Tình trạng Supabase:**
+   * **Cách kiểm tra logs:** Truy cập **Netlify Dashboard ➜ Logs ➜ Functions ➜ [Next.js Server Handler]**. Tìm kiếm theo mã `requestId` (ví dụ `req-da9b50d4-aa4c-4c2e-9678-ddcd43c0ef9d`) hoặc cụm từ `[API_ERROR]` / `Login route error:`.
+   * **Đối chiếu Supabase Table Editor:** Truy cập **Supabase Dashboard ➜ Table Editor**. Nếu danh sách bảng trống (0 tables), điều đó xác thực 100% database Supabase chưa được chạy lệnh `prisma migrate deploy` (chưa có bảng `users`, `lessons`, `levels`, `site_settings`...), khiến truy vấn SQL bị lỗi `relation "..." does not exist`.
+   * **Tài khoản Admin:** Cơ sở dữ liệu Cloud chưa có tài khoản Quản trị viên nào (hệ thống kiên quyết không dùng tài khoản demo trên Production).
 
 ---
 
-## 4. QUY TRÌNH KÍCH HOẠT CLOUD PRODUCTION (RUNBOOK DÀNH CHO BỘ PHẬN KỸ THUẬT)
+## 3. CÁC CẢI TIẾN BẢO MẬT & KẾT NỐI TLS CHÍNH QUY TRONG MÃ NGUỒN
 
-Bộ phận kỹ thuật thực hiện tuần tự các bước dưới đây trên máy tính nội bộ có quyền quản trị dự án (không chia sẻ mật khẩu hay chuỗi kết nối vào kênh chat công cộng):
+1. **Loại bỏ hoàn toàn `rejectUnauthorized: false`:**
+   * Đã cấu hình xác minh chứng chỉ số TLS nghiêm ngặt (`rejectUnauthorized: true`) trong `src/lib/prisma.ts`, `scripts/run-cloud-setup.ts` và `scripts/create-prod-admin.ts`.
+   * Chứng chỉ TLS của máy chủ Supabase (`*.pooler.supabase.com` và `*.supabase.co`) được cấp bởi Certificate Authority công khai uy tín (Amazon Root CA 1 / Let's Encrypt), tương thích hoàn toàn với CA store mặc định của Node.js runtime mà không cần tắt xác minh.
+   * Hỗ trợ nạp chứng chỉ gốc tùy chỉnh qua biến `DATABASE_SSL_CERT` khi cần thiết.
+2. **Tối ưu hóa Serverless Connection Pool:**
+   * Giới hạn `max: 5` kết nối trong môi trường production nhằm ngăn chặn tình trạng cạn kiệt kết nối pooler trên Supabase Free tier.
+   * Thiết lập `connectionTimeoutMillis: 10000` (10 giây) để đảm bảo ổn định trong giai đoạn cold-start xuyên khu vực.
+3. **Cơ chế nạp Lazy Prisma Client:**
+   * Ngăn lỗi build tĩnh trong quá trình `next build` khi môi trường biên dịch chưa nạp runtime secrets.
 
-### Bước 4.1: Chuẩn bị tệp cấu hình tạm thời `.env.production.local`
-Tại thư mục gốc dự án (`a:\Web V2`), tạo tệp `.env.production.local` với nội dung mẫu:
+---
+
+## 4. HƯỚNG DẪN LẤY CHUỖI KẾT NỐI TỪ SUPABASE DASHBOARD
+
+> [!IMPORTANT]
+> **Quy tắc bất biến:** Không tự suy đoán hoặc ghép thủ công hostname/port. Hãy sao chép trực tiếp từ bảng điều khiển của Supabase.
+
+1. Đăng nhập vào [Supabase Dashboard](https://supabase.com/dashboard).
+2. Chọn dự án của Bạn (ví dụ `tu-sach-ao-lam`).
+3. Đi đến: **Project Settings** (biểu tượng bánh răng góc dưới bên trái) ➜ **Database**.
+4. Cuộn xuống phần **Connection string**, chọn thẻ **URI**:
+   * **Để lấy `DATABASE_URL` (cho ứng dụng Netlify & truy vấn pooled):**
+     * Chọn chế độ: **Transaction** (hoặc Pooled, hiển thị cổng `6543`).
+     * Bấm nút **Copy URI**.
+     * Thay thế `[YOUR-PASSWORD]` bằng mật khẩu database của Bạn.
+   * **Để lấy `DIRECT_URL` (cho Migration DDL & Script thiết lập):**
+     * Chọn chế độ: **Session** (hiển thị cổng `5432`, hỗ trợ IPv4).
+     * Bấm nút **Copy URI**.
+     * Thay thế `[YOUR-PASSWORD]` bằng mật khẩu database của Bạn.
+
+---
+
+## 5. QUY TRÌNH KÍCH HOẠT CLOUD PRODUCTION (RUNBOOK KỸ THUẬT)
+
+Bộ phận kỹ thuật thực hiện tuần tự các bước trên terminal máy tính nội bộ (không gửi mật khẩu hay chuỗi kết nối vào chat):
+
+### Bước 5.1: Sinh khóa bảo mật `AUTH_SECRET` ngẫu nhiên
+Chạy lệnh sau trong PowerShell hoặc Terminal để sinh chuỗi khóa ngẫu nhiên 64 ký tự hex (độ hỗn loạn mật mã học cao):
+
+```bash
+node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+```
+*Sao chép chuỗi kết quả sinh ra để sử dụng làm `AUTH_SECRET`.*
+
+### Bước 5.2: Chuẩn bị tệp cấu hình tạm thời `.env.production.local`
+Tạo tệp `.env.production.local` tại thư mục gốc `a:\Web V2` với nội dung:
 
 ```env
-# ==============================================================================
-# CẤU HÌNH KẾT NỐI SUPABASE CLOUD PRODUCTION (THAY THẾ BẰNG THÔNG TIN DỰ ÁN CỦA BẠN)
-# ==============================================================================
+# Dán chuỗi Transaction Pooler (URI) lấy từ Supabase Dashboard:
+DATABASE_URL="<DAN_CHUOI_TRANSACTION_POOLER_TU_SUPABASE_DASHBOARD_VAO_DAY>"
 
-# 1. Chuỗi kết nối Transaction Pooler (Port 6543) - Dành cho ứng dụng truy vấn
-DATABASE_URL="postgresql://postgres.[YOUR-PROJECT-REF]:[YOUR-PASSWORD]@aws-0-ap-southeast-1.pooler.supabase.com:6543/postgres?sslmode=require"
+# Dán chuỗi Session Pooler (URI) lấy từ Supabase Dashboard:
+DIRECT_URL="<DAN_CHUOI_SESSION_POOLER_TU_SUPABASE_DASHBOARD_VAO_DAY>"
 
-# 2. Chuỗi kết nối Session Pooler (Port 5432 IPv4) - Dành cho Migration và DDL
-DIRECT_URL="postgresql://postgres.[YOUR-PROJECT-REF]:[YOUR-PASSWORD]@aws-0-ap-southeast-1.pooler.supabase.com:5432/postgres?sslmode=require"
-
-# 3. Môi trường ứng dụng
 APP_ENV="production"
 NODE_ENV="production"
 
-# 4. Khóa bí mật ký phiên làm việc JWT Admin (Tối thiểu 32 ký tự ngẫu nhiên)
-AUTH_SECRET="khoa-bi-mat-ngau-nhien-it-nhat-32-ky-tu-tu-sach-ao-lam-2026"
-
-# 5. Cấu hình Supabase Storage (Tùy chọn nếu đã tạo bucket 'sentrang-media')
-SUPABASE_URL="https://[YOUR-PROJECT-REF].supabase.co"
-SUPABASE_SERVICE_ROLE_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-SUPABASE_STORAGE_BUCKET="sentrang-media"
+# Dán chuỗi khóa ngẫu nhiên vừa sinh ở Bước 5.1:
+AUTH_SECRET="<DAN_CHUOI_NGẪU_NHIÊN_SINH_O_BUOC_5_1_VAO_DAY>"
 ```
 
-> **Lưu ý kỹ thuật quan trọng về cổng Supabase:**
-> * `DIRECT_URL` sử dụng Session Pooler `aws-0-ap-southeast-1.pooler.supabase.com` ở cổng **5432** để bảo đảm phân giải địa chỉ qua mạng IPv4 ổn định tại Việt Nam (thay vì direct hostname `db.[ref].supabase.co` chỉ có IPv6).
-
----
-
-### Bước 4.2: Chạy Script nạp Schema & 156 bài học Master Data
-Mở terminal (PowerShell / Command Prompt) tại thư mục dự án và chạy lệnh:
+### Bước 5.3: Chạy Script nạp Schema & 156 bài học Master Data V1.2
+Chạy lệnh nạp dữ liệu an toàn có cơ chế Fail-Fast (kiểm tra đích đến, che mật khẩu dạng `***`, kiểm tra TLS nghiêm ngặt và yêu cầu xác nhận `yes`):
 
 ```bash
 pnpm exec tsx scripts/run-cloud-setup.ts --env-file .env.production.local
 ```
 
-**Diễn biến thực thi chuẩn:**
-1. Script kiểm tra chuỗi kết nối: Phát hiện máy chủ Cloud `aws-0-ap-southeast-1.pooler.supabase.com`, in chuỗi kết nối đã che mật khẩu dạng `postgresql://postgres.[ref]:***@...`.
-2. Hệ thống hiển thị câu hỏi: `⚠️ Xác nhận nạp cấu trúc bảng và 156 bài học Draft vào Database Cloud trên? (yes/no): `
-3. Bộ phận kỹ thuật gõ `yes` và nhấn Enter.
-4. Quá trình tự động chạy `prisma migrate deploy` (tạo toàn bộ bảng, khóa ngoại, chỉ mục full-text tiếng Việt).
-5. Quá trình tự động nạp 156 bài học Master Data V1.2.
-6. Hậu kiểm trực tiếp: In thông báo:
-   ```
-   ✅ KẾT QUẢ THIẾT LẬP DATABASE CLOUD THÀNH CÔNG:
-     • Tổng số bài học:     156/156 bài
-     • Số bài đã xuất bản:  0 bài
-     • Số bài bản nháp:     156 bài
-   🎉 BẤT BIẾN DỮ LIỆU ĐẠT CHUẨN 100%: Toàn bộ 156 bài học đều ở trạng thái Draft.
-   ```
+> **Kết quả đạt được:**
+> * Tự động tạo toàn bộ bảng, khóa ngoại và chỉ mục tìm kiếm full-text tiếng Việt.
+> * Nạp 156 bài học Master Data V1.2.
+> * Bất biến dữ liệu bảo toàn 100%: **156 bài học Draft / 0 bài Published**.
 
----
-
-### Bước 4.3: Tạo tài khoản Quản trị viên (Admin Production)
-Chạy script chuyên dụng với cơ chế ẩn mật khẩu:
+### Bước 5.4: Tạo tài khoản Quản trị viên (Admin Production)
+Chạy script chuyên dụng với cơ chế ẩn mật khẩu (`*`):
 
 ```bash
 pnpm exec tsx scripts/create-prod-admin.ts --env-file .env.production.local
 ```
-
-**Thao tác nhập liệu:**
-* Nhập Email quản trị: Ví dụ `admin@gdptvietnam.org` (hoặc email của người phụ trách).
-* Nhập Họ và tên: Ví dụ `Quản Trị Viên Học Vụ`.
-* Nhập Mật khẩu: Màn hình sẽ ẩn ký tự và hiển thị dấu `*` bảo mật.
+* Nhập Email quản trị viên thực tế của Ban Quản Trị (không dùng email demo).
+* Nhập Mật khẩu quản trị (tối thiểu 12 ký tự, đủ chữ hoa, thường, số, ký tự đặc biệt). Màn hình sẽ ẩn ký tự dạng `*`.
 * Nhập lại mật khẩu để xác nhận.
-* Hệ thống tự động băm mật khẩu bằng thuật toán **bcrypt với độ phức tạp cost = 12**, ghi bản ghi vào bảng `users` và lưu vết vào bảng `audit_logs`.
+* Script băm mật khẩu bằng **bcrypt cost = 12**, kết nối TLS xác thực chứng chỉ và ghi nhận sự kiện vào `audit_logs`.
 
----
-
-### Bước 4.4: Xóa tệp cấu hình tạm thời
-Sau khi hoàn tất Bước 4.2 và 4.3, xóa ngay tệp `.env.production.local` trên máy để tránh rủi ro bảo mật:
+### Bước 5.5: Xóa tệp cấu hình tạm thời
+Xóa ngay tệp `.env.production.local` trên máy để bảo mật tuyệt đối:
 
 ```bash
 Remove-Item .env.production.local
@@ -156,86 +155,74 @@ Remove-Item .env.production.local
 
 ---
 
-## 5. CẤU HÌNH BIẾN MÔI TRƯỜNG TRÊN NETLIFY DASHBOARD
+## 6. CẤU HÌNH BIẾN MÔI TRƯỜNG PHÂN TÁCH TRÊN NETLIFY DASHBOARD
 
-Sau khi cơ sở dữ liệu Supabase đã có dữ liệu và tài khoản Admin, bộ phận vận hành cấu hình biến môi trường trên giao diện Netlify:
+> [!CAUTION]
+> **Nguyên tắc phân tách môi trường:** Tuyệt đối **KHÔNG** đặt secrets production trong "All Deploy Contexts". Chỉ cấu hình cho ngữ cảnh **Production**.
 
-1. Đăng nhập vào [Netlify Dashboard](https://app.netlify.com).
-2. Chọn trang web của dự án (`cuonghoclaptrinh` hoặc site tương ứng).
-3. Đi đến mục: **Site configuration** ➜ **Environment variables**.
-4. Khai báo 4 biến môi trường sau (chọn phạm vi **All scopes**):
+1. Đăng nhập vào [Netlify Dashboard](https://app.netlify.com) ➜ Chọn site dự án.
+2. Đi đến: **Site configuration** ➜ **Environment variables**.
+3. Thêm các biến môi trường sau với phạm vi **Production only** (Deploy Contexts = Production):
 
-| Tên biến | Giá trị mẫu | Ghi chú kỹ thuật |
-| :--- | :--- | :--- |
-| **`DATABASE_URL`** | `postgresql://postgres.[REF]:[PASS]@aws-0-ap-southeast-1.pooler.supabase.com:6543/postgres?sslmode=require` | Transaction Pooler (cổng 6543) cho ứng dụng |
-| **`DIRECT_URL`** | `postgresql://postgres.[REF]:[PASS]@aws-0-ap-southeast-1.pooler.supabase.com:5432/postgres?sslmode=require` | Session Pooler IPv4 (cổng 5432) |
-| **`AUTH_SECRET`** | Chuỗi bí mật ngẫu nhiên (tối thiểu 32 ký tự) | Dùng để ký và giải mã JWT token phiên Admin |
-| **`APP_ENV`** | `production` | Khai báo môi trường vận hành chính thức |
+| Tên biến | Giá trị | Deploy Contexts | Scopes |
+| :--- | :--- | :--- | :--- |
+| **`DATABASE_URL`** | Chuỗi Transaction Pooler lấy từ Supabase Dashboard | **Production only** | Builds + Functions |
+| **`DIRECT_URL`** | Chuỗi Session Pooler lấy từ Supabase Dashboard | **Production only** | Builds + Functions |
+| **`AUTH_SECRET`** | Khóa bí mật sinh từ Bước 5.1 | **Production only** | Builds + Functions |
+| **`APP_ENV`** | `production` | **Production only** | Builds + Functions |
 
-5. **Kích hoạt Deploy lại (Redeploy):**
-   * Đi đến mục **Deploys** trên Netlify.
-   * Bấm vào nút **Trigger deploy** ➜ Chọn **Deploy site**.
-   * Đợi Netlify build xong trong khoảng 1–2 phút để các serverless functions nhận diện cấu hình mới.
+*(Đối với Deploy Previews, để trống hoặc trỏ tới database staging riêng biệt để ngăn PR preview tác động đến dữ liệu production).*
+
+4. **Kích hoạt Deploy lại (Redeploy):**
+   * Vào mục **Deploys** trên Netlify.
+   * Nhấn **Trigger deploy** ➜ **Deploy site**.
 
 ---
 
-## 6. QUY TRÌNH KIỂM THỬ XUẤT BẢN BÀI HỌC (E2E VERIFICATION)
+## 7. QUY TRÌNH KIỂM THỬ XUẤT BẢN THEO CHUẨN MASTER DATA V1.2
 
-Bộ phận vận hành thực hiện kiểm thử nghiệm thu xuất bản đúng **01 bài học duy nhất** theo các bước sau:
+Sau khi hoàn tất cấu hình và redeploy, bộ phận vận hành kiểm tra theo quy trình chuẩn:
 
-```mermaid
-flowchart LR
-    A["1. Đăng nhập /admin/login"] --> B["2. Dashboard /admin (156 Draft)"]
-    B --> C["3. Quản lý bài học (/admin/lessons)"]
-    C --> D["4. Chọn bài thử nghiệm (MD-01)"]
-    D --> E["5. Bấm Mark Ready"]
-    E --> F["6. Bấm Publish"]
-    F --> G["7. Độc giả xem trên cuonghoclaptrinh.io.vn"]
-```
+> [!IMPORTANT]
+> **Nguyên tắc kiểm thử xuất bản:** Chỉ thao tác thử nghiệm với đúng **01 bài học cụ thể** được chỉ định trong Master Data V1.2. Tuyệt đối không xuất bản hàng loạt.
 
-### Chi tiết các bước thực hiện:
-1. **Đăng nhập:** Mở trình duyệt, truy cập `https://cuonghoclaptrinh.io.vn/admin/login`. Nhập email và mật khẩu vừa tạo ở Bước 4.3.
-2. **Kiểm tra Dashboard:** Hệ thống điều hướng vào `/admin`. Kiểm tra bảng thông số thống kê:
+### Thông tin bài học chỉ định theo Master Data V1.2:
+* **Mã bài học (ID):** `D-MM-A-01`
+* **Tiêu đề chuẩn:** `Lịch sử Đức Phật Thích Ca.`
+* **Bậc học:** Bậc Mở Mắt (`mo-mat`)
+* **Lĩnh vực:** Phật pháp (`phat-phap`)
+* **Đường dẫn độc giả sau xuất bản:** `/bai-hoc/d-mm-a-01-lich-su-duc-phat-thich-ca`
+* **Đường dẫn danh mục bậc học:** `/nganh-dong/mo-mat`
+
+### Các bước thực hiện:
+1. **Đăng nhập:** Truy cập `https://cuonghoclaptrinh.io.vn/admin/login`, đăng nhập bằng tài khoản tạo ở Bước 5.4.
+2. **Xác nhận Dashboard:** Kiểm tra các chỉ số thống kê:
    * Tổng số bài học: **156 bài**.
-   * Số bài bản nháp (Draft): **156 bài**.
-   * Số bài đã xuất bản (Published): **0 bài**.
-3. **Mở danh sách bài học:** Bấm vào menu **Bài học** (hoặc truy cập `/admin/lessons`).
-4. **Chọn bài học thử nghiệm:** Tìm bài học đầu tiên của Bậc Mở Mắt (ví dụ: bài `MD-01` *"Em Đến Chùa"*).
-5. **Chuyển trạng thái Sẵn sàng:** Bấm vào chi tiết bài học, nhấn nút **Chuyển sang Sẵn sàng (Mark Ready)**.
-6. **Thực hiện Xuất bản:** Nhấn nút **Xuất bản (Publish)**.
-7. **Nghiệm thu phía Độc giả:**
-   * Mở một cửa sổ trình duyệt ẩn danh (Incognito), truy cập:  
-     `https://cuonghoclaptrinh.io.vn/nganh-dong/mo-mat`
-   * Xác nhận bài học vừa xuất bản đã hiển thị trong danh sách.
-   * Nhấp vào bài đọc để kiểm tra nội dung:  
-     `https://cuonghoclaptrinh.io.vn/bai-hoc/em-den-chua`
-   * Kiểm tra giao diện đọc: Cỡ chữ, căn chỉnh đoạn, điều hướng về mục lục hoạt động mượt mà.
-8. **Bảo toàn bất biến dữ liệu:**
-   * Xác nhận **155 bài học còn lại vẫn giữ nguyên 100% trạng thái Draft**, không xuất hiện trên giao diện công chúng.
+   * Bản nháp (Draft): **156 bài**.
+   * Đã xuất bản (Published): **0 bài**.
+3. **Mở danh sách bài học:** Vào menu **Bài học** (`/admin/lessons`).
+4. **Mở bài học thử nghiệm:** Tìm bài có mã `D-MM-A-01` (*"Lịch sử Đức Phật Thích Ca."*).
+5. **Chuyển trạng thái Sẵn sàng:** Bấm **Chuyển sang Sẵn sàng (Mark Ready)**.
+6. **Thực hiện Xuất bản:** Bấm **Xuất bản (Publish)**.
+7. **Nghiệm thu phía Độc giả (Mở tab ẩn danh Incognito):**
+   * Truy cập: `https://cuonghoclaptrinh.io.vn/nganh-dong/mo-mat` ➜ Xác nhận bài `D-MM-A-01` xuất hiện.
+   * Truy cập bài đọc: `https://cuonghoclaptrinh.io.vn/bai-hoc/d-mm-a-01-lich-su-duc-phat-thich-ca` ➜ Xác nhận nội dung hiển thị chuẩn xác, không có lỗi.
+8. **Kiểm tra tính bất biến:**
+   * **155 bài học còn lại phải giữ nguyên 100% trạng thái Draft**, không xuất hiện trên giao diện độc giả.
 
 ---
 
-## 7. QUY ĐỊNH BẢO MẬT & KẾ HOẠCH BẢO TRÌ ĐỊNH KỲ
+## 8. QUY TẮC BẢO MẬT & GIÁM SÁT HẠN MỨC 0 VNĐ
 
-### 7.1. Nguyên tắc Bảo mật Dữ liệu
-* Tuyệt đối không tự ý xuất bản hàng loạt; chỉ xuất bản các bài học đã được Hội đồng Học vụ thông qua nội dung biên tập.
-* Không chia sẻ thông tin tài khoản Admin hoặc chuỗi kết nối Cloud qua tin nhắn mở.
-* Toàn bộ thao tác biên tập và duyệt bài đều được tự động lưu vết vào hệ thống `audit_logs`.
-
-### 7.2. Lịch Sao lưu & Bảo trì Định kỳ (Hàng Tuần)
-1. **Sao lưu Cơ sở dữ liệu qua lệnh `pg_dump`:**
-   ```bash
-   pg_dump "postgresql://postgres.[REF]:[PASS]@aws-0-ap-southeast-1.pooler.supabase.com:5432/postgres?sslmode=require" -F c -b -v -f "sentrang_backup_$(Get-Date -Format 'yyyyMMdd').dump"
-   ```
-2. **Sao lưu Tài nguyên Hình ảnh Cloud về máy cục bộ:**
-   ```bash
-   pnpm exec tsx scripts/backup-cloud-media.ts --env-file .env.production.local
-   ```
-3. **Giám sát Hạn mức Gói Miễn phí (0 VNĐ):**
-   * Giới hạn cơ sở dữ liệu Supabase: 500 MB (Dự án hiện tại ~25 MB, còn trống > 95%).
-   * Giới hạn Cloud Storage: 1 GB.
-   * Băng thông Netlify: 100 GB/tháng.
-   * Duy trì chi phí vận hành ở mức **0 VNĐ**.
+1. **Tuyệt đối không rò rỉ Secrets:** Không commit tệp `.env`, không gửi connection string hay token qua chat.
+2. **Kế hoạch Sao lưu Hàng tuần:**
+   * Chạy lệnh `pg_dump` kết nối Session Pooler (port 5432) để lưu file dump nhị phân có checksum.
+   * Chạy script `pnpm exec tsx scripts/backup-cloud-media.ts` để đồng bộ ảnh về máy an toàn.
+3. **Giới hạn tài nguyên Free Tier:**
+   * Supabase DB: < 500 MB (hiện sử dụng ~25 MB, an toàn 95%).
+   * Supabase Storage: < 1 GB.
+   * Netlify Bandwidth: < 100 GB/tháng.
+   * Cam kết chi phí vận hành: **0 VNĐ**.
 
 ---
-*Tài liệu được phê duyệt và ban hành bởi Ban Kỹ Thuật Tủ Sách Áo Lam V1.0.*
+*Tài liệu được cập nhật và kiểm duyệt bởi Ban Kỹ Thuật Dự Án Tủ Sách Áo Lam V1.0.*
