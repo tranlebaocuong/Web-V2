@@ -69,12 +69,17 @@ function getPrismaClient(): PrismaClient {
 
   const connectionString = getValidatedDatabaseUrl();
 
+  const isCloud =
+    !connectionString.includes("127.0.0.1") &&
+    !connectionString.includes("localhost");
+
   const pool =
     globalForPrisma.pool ??
     new Pool({
       connectionString,
-      max: 10,
-      connectionTimeoutMillis: 5000,
+      max: process.env.NODE_ENV === "production" ? 5 : 10,
+      connectionTimeoutMillis: 10000,
+      ssl: isCloud ? { rejectUnauthorized: false } : undefined,
     });
   globalForPrisma.pool = pool;
 

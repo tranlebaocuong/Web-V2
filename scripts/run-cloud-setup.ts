@@ -157,7 +157,7 @@ export async function runCloudSetup() {
   }
 
   // 4. Thiết lập môi trường chạy an toàn cho tiến trình con
-  const childEnv = {
+  const childEnv: NodeJS.ProcessEnv = {
     ...process.env,
     DATABASE_URL: databaseUrl,
     DIRECT_URL: directUrl,
