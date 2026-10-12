@@ -9,6 +9,11 @@
 [build.environment]
   NODE_VERSION = "20"
   PNPM_FLAGS = "--frozen-lockfile"
+  # APP_ENV / NODE_ENV hold non-sensitive values (e.g. "production") that naturally
+  # appear in compiled Next.js code, so they must not be treated as secrets.
+  SECRETS_SCAN_OMIT_KEYS = "APP_ENV,NODE_ENV,PORT"
+  # Build cache is never deployed; skip scanning it.
+  SECRETS_SCAN_OMIT_PATHS = ".netlify/.next/cache/**,.next/cache/**"
 
 # Next.js 15 Official Netlify Runtime Plugin
 [[plugins]]
