@@ -1,0 +1,44 @@
+# ==============================================================================
+# TỦ SÁCH ÁO LAM — CẤU HÌNH DEPLOY TRÊN NETLIFY (NETLIFY.TOML)
+# ==============================================================================
+
+[build]
+  command = "prisma generate && next build"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "20"
+  PNPM_FLAGS = "--frozen-lockfile"
+
+# Next.js 15 Official Netlify Runtime Plugin
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+# Security Headers áp dụng toàn cầu trên Netlify Edge
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains; preload"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+
+# Chặn truy cập trực tiếp các tệp nhạy cảm trên Edge
+[[redirects]]
+  from = "/.env*"
+  to = "/404"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/.git*"
+  to = "/404"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/*.sql"
+  to = "/404"
+  status = 404
+  force = true

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import fs from "fs/promises";
 import path from "path";
 import crypto from "crypto";
-import { MEDIA_DIR, detectRealImageMime } from "@/lib/dal/admin/media";
+import { MEDIA_DIR, detectRealImageMime, getMediaBuffer } from "@/lib/dal/admin/media";
 import { prisma } from "@/lib/prisma";
 import { requireAdminAuth } from "@/lib/auth/guard";
 
@@ -27,11 +27,9 @@ export async function GET(
     );
   }
 
-  // 2. Kiểm tra tệp có tồn tại trên đĩa cứng
-  let buffer: Buffer;
-  try {
-    buffer = await fs.readFile(filePath);
-  } catch {
+  // 2. Lấy dữ liệu tệp (Hỗ trợ cả Cloud Storage trên Netlify lẫn đĩa cứng cục bộ)
+  const buffer = await getMediaBuffer(safeBaseName);
+  if (!buffer) {
     return NextResponse.json(
       {
         success: false,

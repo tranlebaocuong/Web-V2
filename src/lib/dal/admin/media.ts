@@ -102,8 +102,27 @@ export async function saveUploadedFile(
     throw new Error("Phát hiện lỗi an toàn đường dẫn (Path Traversal).");
   }
 
-  // 6. Ghi vào vùng lưu trữ riêng tư data/media/
-  await fs.writeFile(filePath, buffer);
+  // 6. Ghi vào Cloud Object Storage (nếu có cấu hình) hoặc lưu cục bộ (Local Disk)
+  if (process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    const bucket = process.env.SUPABASE_STORAGE_BUCKET || "sentrang-media";
+    const uploadUrl = `${process.env.SUPABASE_URL}/storage/v1/object/${bucket}/${safeFilename}`;
+    const res = await fetch(uploadUrl, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY}`,
+        "Content-Type": detected.mime,
+        "x-upsert": "true",
+      },
+      body: new Uint8Array(buffer),
+    });
+    if (!res.ok) {
+      const errorText = await res.text();
+      throw new Error(`Tải lên Cloud Object Storage thất bại: ${errorText}`);
+    }
+  } else {
+    // Ghi vào vùng lưu trữ riêng tư data/media/
+    await fs.writeFile(filePath, buffer);
+  }
 
   return {
     storageKey: safeFilename,
@@ -111,6 +130,39 @@ export async function saveUploadedFile(
     size: buffer.length,
     detectedMime: detected.mime,
   };
+}
+
+/**
+ * Lấy Buffer dữ liệu hình ảnh hỗ trợ cả Cloud Storage (Netlify Serverless) lẫn Local Disk
+ */
+export async function getMediaBuffer(safeFilename: string): Promise<Buffer | null> {
+  // 1. Thử lấy từ Cloud Object Storage nếu có cấu hình
+  if (process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    try {
+      const bucket = process.env.SUPABASE_STORAGE_BUCKET || "sentrang-media";
+      const getUrl = `${process.env.SUPABASE_URL}/storage/v1/object/authenticated/${bucket}/${safeFilename}`;
+      const res = await fetch(getUrl, {
+        headers: {
+          Authorization: `Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY}`,
+        },
+      });
+      if (res.ok) {
+        const arr = await res.arrayBuffer();
+        return Buffer.from(arr);
+      }
+    } catch (err) {
+      console.error("[Storage] Lỗi khi truy vấn Cloud Storage:", err);
+    }
+  }
+
+  // 2. Fallback hoặc mặc định: Đọc từ đĩa cứng cục bộ (MEDIA_DIR)
+  const filePath = path.resolve(path.join(MEDIA_DIR, safeFilename));
+  if (!filePath.startsWith(path.resolve(MEDIA_DIR))) return null;
+  try {
+    return await fs.readFile(filePath);
+  } catch {
+    return null;
+  }
 }
 
 export async function getMediaAssets(params?: { lessonId?: string; take?: number; skip?: number }) {
