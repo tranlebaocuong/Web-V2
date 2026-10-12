@@ -1,0 +1,75 @@
+{
+  "summary": {
+    "total": 11,
+    "passed": 11,
+    "failed": 0
+  },
+  "results": [
+    {
+      "category": "Data Invariants",
+      "name": "156 Drafts / 0 Published Invariant",
+      "status": "PASS",
+      "details": "Tổng: 156, Draft: 156, Published: 0, Raw Content: 156. Không có bài nào bị lộ."
+    },
+    {
+      "category": "Data Invariants",
+      "name": "Master Data Hierarchy Integrity",
+      "status": "PASS",
+      "details": "Branch: 1, Levels: 4, Categories: 3, Sources: 4."
+    },
+    {
+      "category": "Prisma Fail-Fast",
+      "name": "Block Test DB in Production Environment",
+      "status": "PASS",
+      "details": "Hệ thống phát hiện database test trong production và chủ động ngắt kết nối ngay lập tức."
+    },
+    {
+      "category": "Prisma Fail-Fast",
+      "name": "Allow Valid Production Database",
+      "status": "PASS",
+      "details": "Kết nối production hợp lệ được chấp nhận thành công."
+    },
+    {
+      "category": "Session Security",
+      "name": "Token Creation & Verification",
+      "status": "PASS",
+      "details": "Token hợp lệ, userId=test-user-id-123"
+    },
+    {
+      "category": "Session Security",
+      "name": "Server-Side Session Revocation",
+      "status": "PASS",
+      "details": "Phiên bị thu hồi tức thì trong memory cache và PostgreSQL site_settings."
+    },
+    {
+      "category": "Media Security",
+      "name": "Reject Malicious Executable Disguised as Image",
+      "status": "PASS",
+      "details": "Chặn đứng tệp thực thi giả mạo đuôi ảnh qua kiểm tra Magic Bytes."
+    },
+    {
+      "category": "Media Security",
+      "name": "Accurately Identify Valid JPEG Magic Bytes",
+      "status": "PASS",
+      "details": "Xác định chính xác MIME: image/jpeg"
+    },
+    {
+      "category": "Disaster Recovery",
+      "name": "Automated Backup Bundle Generation",
+      "status": "PASS",
+      "details": "Dump size: 748684 bytes, SHA-256: 173c16e24acc4f84..."
+    },
+    {
+      "category": "Disaster Recovery",
+      "name": "Cryptographic Manifest Integrity",
+      "status": "PASS",
+      "details": "Tệp manifest.json kê khai đầy đủ checksum cơ sở dữ liệu và danh sách media."
+    },
+    {
+      "category": "Secret Protection",
+      "name": "Strict Gitignore Policy",
+      "status": "PASS",
+      "details": "Bảo vệ toàn bộ file .env, dữ liệu data/, tài khoản demo và file log không bị đưa vào git."
+    }
+  ]
+}
