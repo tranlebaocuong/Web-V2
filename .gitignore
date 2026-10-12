@@ -38,3 +38,6 @@ DEMO_CREDENTIALS.txt
 # TypeScript
 *.tsbuildinfo
 next-env.d.ts
+
+# Netlify
+.netlify
