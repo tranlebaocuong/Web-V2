@@ -502,6 +502,14 @@ export function startSetupServer() {
           if (hasTables) {
             const countRes = await pool.query("SELECT COUNT(*) as cnt FROM lessons;");
             lessonCount = parseInt(countRes.rows[0].cnt, 10);
+
+            // Kiểm tra tính tương thích schema và chuẩn bị cột updated_at cho users
+            try {
+              await pool.query(`
+                ALTER TABLE "users" 
+                ADD COLUMN IF NOT EXISTS "updated_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP;
+              `);
+            } catch {}
           }
 
           // Sinh khóa AUTH_SECRET ngẫu nhiên 256-bit
@@ -662,20 +670,59 @@ export function startSetupServer() {
         });
 
         try {
+          // Kiểm tra tương thích schema bảng users
+          const userCols = await pool.query(`
+            SELECT column_name 
+            FROM information_schema.columns 
+            WHERE table_schema = 'public' AND table_name = 'users';
+          `);
+          const colNames = userCols.rows.map((r: any) => r.column_name);
+
+          // Nếu chưa có cột updated_at, bổ sung an toàn bằng migration idempotent
+          if (!colNames.includes("updated_at")) {
+            try {
+              await pool.query(`
+                ALTER TABLE "users" 
+                ADD COLUMN IF NOT EXISTS "updated_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP;
+              `);
+            } catch (alterErr) {
+              // Bỏ qua nếu không đủ quyền DDL, sẽ fallback sang query không có updated_at
+            }
+          }
+
+          // Kiểm tra lại sự tồn tại của cột updated_at sau khi alter
+          const checkAgain = await pool.query(`
+            SELECT column_name 
+            FROM information_schema.columns 
+            WHERE table_schema = 'public' AND table_name = 'users' AND column_name = 'updated_at';
+          `);
+          const hasUpdatedAt = checkAgain.rows.length > 0;
+
           const passwordHash = await bcrypt.hash(password, 12);
           const userId = crypto.randomUUID();
 
-          const query = `
-            INSERT INTO users (id, email, password_hash, role, is_active, created_at, updated_at)
-            VALUES ($1, $2, $3, 'admin', true, NOW(), NOW())
-            ON CONFLICT (email)
-            DO UPDATE SET
-              password_hash = $3,
-              role = 'admin',
-              is_active = true,
-              updated_at = NOW()
-            RETURNING id, email, role, is_active;
-          `;
+          const query = hasUpdatedAt
+            ? `
+              INSERT INTO users (id, email, password_hash, role, is_active, created_at, updated_at)
+              VALUES ($1, $2, $3, 'admin', true, NOW(), NOW())
+              ON CONFLICT (email)
+              DO UPDATE SET
+                password_hash = $3,
+                role = 'admin',
+                is_active = true,
+                updated_at = NOW()
+              RETURNING id, email, role, is_active, created_at;
+            `
+            : `
+              INSERT INTO users (id, email, password_hash, role, is_active, created_at)
+              VALUES ($1, $2, $3, 'admin', true, NOW())
+              ON CONFLICT (email)
+              DO UPDATE SET
+                password_hash = $3,
+                role = 'admin',
+                is_active = true
+              RETURNING id, email, role, is_active, created_at;
+            `;
 
           const resDb = await pool.query(query, [userId, trimmedEmail, passwordHash]);
           const user = resDb.rows[0];

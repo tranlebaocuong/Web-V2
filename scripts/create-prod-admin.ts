@@ -306,21 +306,55 @@ export async function createProductionAdmin() {
     await pool.query("SELECT 1;");
     console.log("✓ Kênh kết nối TLS tới Database Cloud đã được xác thực an toàn.");
 
+    // Kiểm tra tính tương thích schema bảng users và bổ sung updated_at nếu cần
+    const userCols = await pool.query(`
+      SELECT column_name 
+      FROM information_schema.columns 
+      WHERE table_schema = 'public' AND table_name = 'users';
+    `);
+    const colNames = userCols.rows.map((r: any) => r.column_name);
+    if (!colNames.includes("updated_at")) {
+      try {
+        await pool.query(`
+          ALTER TABLE "users" 
+          ADD COLUMN IF NOT EXISTS "updated_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP;
+        `);
+      } catch {}
+    }
+
+    const checkAgain = await pool.query(`
+      SELECT column_name 
+      FROM information_schema.columns 
+      WHERE table_schema = 'public' AND table_name = 'users' AND column_name = 'updated_at';
+    `);
+    const hasUpdatedAt = checkAgain.rows.length > 0;
+
     console.log("• Băm mật khẩu bằng thuật toán bcrypt (cost = 12)...");
     const passwordHash = await bcrypt.hash(password, 12);
 
     const userId = crypto.randomUUID();
-    const query = `
-      INSERT INTO users (id, email, password_hash, role, is_active, created_at, updated_at)
-      VALUES ($1, $2, $3, 'admin', true, NOW(), NOW())
-      ON CONFLICT (email)
-      DO UPDATE SET
-        password_hash = $3,
-        role = 'admin',
-        is_active = true,
-        updated_at = NOW()
-      RETURNING id, email, role, is_active, created_at;
-    `;
+    const query = hasUpdatedAt
+      ? `
+        INSERT INTO users (id, email, password_hash, role, is_active, created_at, updated_at)
+        VALUES ($1, $2, $3, 'admin', true, NOW(), NOW())
+        ON CONFLICT (email)
+        DO UPDATE SET
+          password_hash = $3,
+          role = 'admin',
+          is_active = true,
+          updated_at = NOW()
+        RETURNING id, email, role, is_active, created_at;
+      `
+      : `
+        INSERT INTO users (id, email, password_hash, role, is_active, created_at)
+        VALUES ($1, $2, $3, 'admin', true, NOW())
+        ON CONFLICT (email)
+        DO UPDATE SET
+          password_hash = $3,
+          role = 'admin',
+          is_active = true
+        RETURNING id, email, role, is_active, created_at;
+      `;
 
     const res = await pool.query(query, [userId, email.toLowerCase(), passwordHash]);
     const createdUser = res.rows[0];
